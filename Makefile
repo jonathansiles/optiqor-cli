@@ -10,13 +10,13 @@ help: ## Show this help
 		/^[a-zA-Z0-9_.-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
 .PHONY: build
-build: ## Build the costify binary
+build: ## Build the sevro binary
 	@mkdir -p $(BIN_DIR)
-	$(GO) build -trimpath -ldflags='$(LDFLAGS)' -o $(BIN_DIR)/costify ./cmd/costify
+	$(GO) build -trimpath -ldflags='$(LDFLAGS)' -o $(BIN_DIR)/sevro ./cmd/sevro
 
 .PHONY: install
 install: ## go install
-	$(GO) install -trimpath -ldflags='$(LDFLAGS)' ./cmd/costify
+	$(GO) install -trimpath -ldflags='$(LDFLAGS)' ./cmd/sevro
 
 .PHONY: test
 test: ## Run unit + golden tests

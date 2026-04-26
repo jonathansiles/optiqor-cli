@@ -4,7 +4,7 @@
 
 **Please do not open public GitHub issues for security vulnerabilities.**
 
-Email `security@costify.dev` with:
+Email `security@sevro.dev` with:
 
 - A description of the vulnerability and its potential impact
 - Reproduction steps (proof of concept where possible)
@@ -17,18 +17,18 @@ You may encrypt your report with our PGP key (fingerprint: TBD when key is publi
 
 ## Supported Versions
 
-The latest minor release of `@costify/cost` receives security updates. Older versions are not supported.
+The latest minor release of `@sevro/cli` receives security updates. Older versions are not supported.
 
 ## Scope
 
 In scope:
 
-- The `costify` binary (this repo)
-- The `@costify/cost` npm wrapper
+- The `sevro` binary (this repo)
+- The `@sevro/cli` npm wrapper
 
 Out of scope:
 
-- The Costify SaaS (report to `security@costify.dev` separately)
+- The Sevro SaaS (report to `security@sevro.dev` separately)
 - Third-party dependencies (please report to upstream maintainers)
 
 ## Disclosure

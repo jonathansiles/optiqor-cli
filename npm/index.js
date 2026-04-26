@@ -1,18 +1,18 @@
 #!/usr/bin/env node
-// Wrapper that invokes the platform-specific costify binary fetched by
+// Wrapper that invokes the platform-specific sevro binary fetched by
 // postinstall.js. Stays small and dependency-free on purpose.
 
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const binaryName = process.platform === 'win32' ? 'costify.exe' : 'costify';
+const binaryName = process.platform === 'win32' ? 'sevro.exe' : 'sevro';
 const binaryPath = path.join(__dirname, '..', 'vendor', binaryName);
 
 if (!fs.existsSync(binaryPath)) {
-  console.error('costify: binary not found at', binaryPath);
-  console.error('costify: try `npm install -g @costify/cost` again, or build from source:');
-  console.error('  go install github.com/lowplane/cli/cmd/costify@latest');
+  console.error('sevro: binary not found at', binaryPath);
+  console.error('sevro: try `npm install -g @sevro/cli` again, or build from source:');
+  console.error('  go install github.com/lowplane/cli/cmd/sevro@latest');
   process.exit(1);
 }
 
@@ -30,6 +30,6 @@ child.on('exit', (code, signal) => {
 });
 
 child.on('error', (err) => {
-  console.error('costify: failed to launch binary:', err.message);
+  console.error('sevro: failed to launch binary:', err.message);
   process.exit(1);
 });

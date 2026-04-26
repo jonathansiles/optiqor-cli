@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Downloads the platform-specific Go binary from the matching GitHub Release
-// and places it at vendor/costify. Designed to fail loudly on unsupported
+// and places it at vendor/sevro. Designed to fail loudly on unsupported
 // platforms instead of silently degrading.
 
 const fs = require('fs');
@@ -15,8 +15,8 @@ const pkg = require('../package.json');
 const VERSION = pkg.version;
 
 // Skip download in CI/dev when the user is building from source.
-if (process.env.COSTIFY_SKIP_POSTINSTALL === '1') {
-  console.log('costify: COSTIFY_SKIP_POSTINSTALL=1, skipping binary download.');
+if (process.env.SEVRO_SKIP_POSTINSTALL === '1') {
+  console.log('sevro: SEVRO_SKIP_POSTINSTALL=1, skipping binary download.');
   process.exit(0);
 }
 
@@ -34,17 +34,17 @@ const key = `${platform}-${arch}`;
 const target = supported[key];
 
 if (!target) {
-  console.error(`costify: unsupported platform ${key}.`);
-  console.error('costify: build from source instead:');
-  console.error('  go install github.com/lowplane/cli/cmd/costify@latest');
+  console.error(`sevro: unsupported platform ${key}.`);
+  console.error('sevro: build from source instead:');
+  console.error('  go install github.com/lowplane/cli/cmd/sevro@latest');
   process.exit(1);
 }
 
-const url = `https://github.com/lowplane/cli/releases/download/v${VERSION}/costify_${VERSION}_${target}.tar.gz`;
+const url = `https://github.com/lowplane/cli/releases/download/v${VERSION}/sevro_${VERSION}_${target}.tar.gz`;
 const vendorDir = path.join(__dirname, '..', 'vendor');
 fs.mkdirSync(vendorDir, { recursive: true });
 
-const tarballPath = path.join(vendorDir, 'costify.tar.gz');
+const tarballPath = path.join(vendorDir, 'sevro.tar.gz');
 
 const get = (u) =>
   new Promise((resolve, reject) => {
@@ -65,17 +65,17 @@ const pipelineP = promisify(pipeline);
 
 (async () => {
   try {
-    console.log(`costify: downloading binary for ${key}...`);
+    console.log(`sevro: downloading binary for ${key}...`);
     const res = await get(url);
     await pipelineP(res, fs.createWriteStream(tarballPath));
     // tar -xzf using system tar (avoids adding tar npm dep).
     execFileSync('tar', ['-xzf', tarballPath, '-C', vendorDir], { stdio: 'inherit' });
     fs.unlinkSync(tarballPath);
-    console.log('costify: ready. Run `costify --version` to verify.');
+    console.log('sevro: ready. Run `sevro --version` to verify.');
   } catch (err) {
-    console.error('costify: failed to install binary:', err.message);
-    console.error('costify: this is non-fatal — build from source if needed:');
-    console.error('  go install github.com/lowplane/cli/cmd/costify@latest');
+    console.error('sevro: failed to install binary:', err.message);
+    console.error('sevro: this is non-fatal — build from source if needed:');
+    console.error('  go install github.com/lowplane/cli/cmd/sevro@latest');
     // Exit 0 so npm install does not abort entirely.
     process.exit(0);
   }

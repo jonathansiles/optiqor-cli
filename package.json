@@ -1,9 +1,9 @@
 {
-  "name": "@costify/cost",
+  "name": "@sevro/cli",
   "version": "0.0.0",
-  "description": "Cost & security analysis for Kubernetes Helm charts. No login. No agent. No cluster connection required.",
+  "description": "Sevro CLI — Detect. Fix. Prove. Cost and security analysis for Kubernetes Helm charts. No login. No agent. No cluster connection required.",
   "license": "Apache-2.0",
-  "homepage": "https://costify.dev",
+  "homepage": "https://sevro.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/lowplane/cli.git"
@@ -19,10 +19,10 @@
     "finops",
     "security",
     "cli",
-    "costify"
+    "sevro"
   ],
   "bin": {
-    "costify": "npm/index.js"
+    "sevro": "npm/index.js"
   },
   "scripts": {
     "postinstall": "node ./npm/postinstall.js",

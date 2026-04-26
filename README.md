@@ -1,16 +1,16 @@
-# Costify
+# Sevro
 
-**Cost and security analysis for Kubernetes Helm charts, from your terminal.**
-No login. No agent. No cluster connection required.
+**Detect. Fix. Prove.**
+Cost and security analysis for Kubernetes Helm charts, from your terminal. No login. No agent. No cluster connection required.
 
-[![npm](https://img.shields.io/npm/v/@costify/cost.svg?label=%40costify%2Fcost&color=blue)](https://www.npmjs.com/package/@costify/cost)
+[![npm](https://img.shields.io/npm/v/@sevro/cli.svg?label=%40sevro%2Fcli&color=blue)](https://www.npmjs.com/package/@sevro/cli)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Go Reference](https://pkg.go.dev/badge/github.com/lowplane/cli.svg)](https://pkg.go.dev/github.com/lowplane/cli)
 [![CI](https://img.shields.io/github/actions/workflow/status/lowplane/cli/ci.yml?branch=main&label=ci)](https://github.com/lowplane/cli/actions/workflows/ci.yml)
-[![Downloads](https://img.shields.io/npm/dm/@costify/cost.svg)](https://www.npmjs.com/package/@costify/cost)
+[![Downloads](https://img.shields.io/npm/dm/@sevro/cli.svg)](https://www.npmjs.com/package/@sevro/cli)
 
 ```sh
-npx @costify/cost analyze ./my-helm-chart
+npx @sevro/cli analyze ./my-helm-chart
 ```
 
 That is it. One command. No setup. No account. Cost and security findings for your Kubernetes workloads in under three seconds.
@@ -19,7 +19,7 @@ That is it. One command. No setup. No account. Cost and security findings for yo
 
 ## Table of Contents
 
-- [Why Costify CLI](#why-costify-cli)
+- [Why Sevro CLI](#why-sevro-cli)
 - [Install](#install)
 - [Quick Start](#quick-start)
 - [How It Works](#how-it-works)
@@ -29,23 +29,23 @@ That is it. One command. No setup. No account. Cost and security findings for yo
 - [CLI vs Agent vs Sandbox](#cli-vs-agent-vs-sandbox)
 - [Configuration](#configuration)
 - [Privacy and Accuracy](#privacy-and-accuracy)
-- [The Full Costify Platform](#the-full-costify-platform)
+- [The Full Sevro Platform](#the-full-sevro-platform)
 - [FAQ](#faq)
 - [Contributing](#contributing)
 - [License](#license)
 
 ---
 
-## Why Costify CLI
+## Why Sevro CLI
 
 Most Kubernetes cost tools require you to install an agent in your cluster, expose Prometheus, and wait 30 days for data. That is the right call for production teams who need exact numbers.
 
 But sometimes you just want a directional answer **right now** about a chart you are reviewing.
 
-The Costify CLI is a deterministic rule engine that reads your Helm chart files (or `values.yaml`) and reports cost inefficiencies and security risks in seconds. It runs fully offline. It does not phone home. It is honest about what it can and cannot tell from static files alone.
+The Sevro CLI is a deterministic rule engine that reads your Helm chart files (or `values.yaml`) and reports cost inefficiencies and security risks in seconds. It runs fully offline. It does not phone home. It is honest about what it can and cannot tell from static files alone.
 
 > [!NOTE]
-> The CLI gives you **directional signal**, not exact numbers. For exact dollar savings backed by 30 days of real Prometheus data and your AWS bill, install the [Costify agent](https://costify.dev/get) in your cluster.
+> The CLI gives you **directional signal**, not exact numbers. For exact dollar savings backed by 30 days of real Prometheus data and your AWS bill, install the [Sevro agent](https://sevro.dev/get) in your cluster.
 
 ---
 
@@ -54,20 +54,20 @@ The Costify CLI is a deterministic rule engine that reads your Helm chart files 
 ### Option 1: npx (zero-install, recommended for one-off use)
 
 ```sh
-npx @costify/cost analyze ./chart
+npx @sevro/cli analyze ./chart
 ```
 
 ### Option 2: Global npm install
 
 ```sh
-npm install -g @costify/cost
-costify analyze ./chart
+npm install -g @sevro/cli
+sevro analyze ./chart
 ```
 
 ### Option 3: Go install
 
 ```sh
-go install github.com/lowplane/cli/cmd/costify@latest
+go install github.com/lowplane/cli/cmd/sevro@latest
 ```
 
 ### Option 4: Download a release binary
@@ -76,8 +76,8 @@ Pre-built binaries for Linux (amd64, arm64) and macOS (amd64, arm64) are publish
 
 ```sh
 # Linux amd64
-curl -L https://github.com/lowplane/cli/releases/latest/download/costify_linux_amd64.tar.gz | tar -xz
-sudo mv costify /usr/local/bin/
+curl -L https://github.com/lowplane/cli/releases/latest/download/sevro_linux_amd64.tar.gz | tar -xz
+sudo mv sevro /usr/local/bin/
 ```
 
 > [!TIP]
@@ -89,22 +89,22 @@ sudo mv costify /usr/local/bin/
 
 ```sh
 # Run the bundled demo (no input needed)
-npx @costify/cost demo
+npx @sevro/cli demo
 
 # Analyze a chart directory
-npx @costify/cost analyze ./my-chart
+npx @sevro/cli analyze ./my-chart
 
 # Analyze a single values file
-npx @costify/cost analyze ./values.production.yaml
+npx @sevro/cli analyze ./values.production.yaml
 
 # Compare two values files
-npx @costify/cost diff ./values.dev.yaml ./values.prod.yaml
+npx @sevro/cli diff ./values.dev.yaml ./values.prod.yaml
 
 # Score a chart against best practices (0-100)
-npx @costify/cost score ./my-chart
+npx @sevro/cli score ./my-chart
 
 # Get JSON output for tooling
-npx @costify/cost analyze ./my-chart --json | jq '.findings[]'
+npx @sevro/cli analyze ./my-chart --json | jq '.findings[]'
 ```
 
 ---
@@ -164,9 +164,9 @@ Every command supports `--json`, `--offline`, `--no-color`, and `--quiet`.
 ## Example Output
 
 ```
-$ npx @costify/cost analyze ./charts/postgresql
+$ npx @sevro/cli analyze ./charts/postgresql
 
-Costify Analysis ----------------------------------- costify.dev
+Sevro Analysis ----------------------------------- sevro.dev
 chart      bitnami/postgresql 12.5.7
 namespace  database
 context    static analysis from values.yaml
@@ -198,11 +198,11 @@ Summary
   estimated monthly savings   $465 (40 percent)
   efficiency score            58 / 100
 
-Sandbox accuracy: plus or minus 40 percent. Install the Costify agent for
+Sandbox accuracy: plus or minus 40 percent. Install the Sevro agent for
 exact numbers backed by 30 days of real Prometheus data and your AWS bill:
-  https://costify.dev/get
+  https://sevro.dev/get
 
-Share this analysis: https://costify.dev/r/9f3a1c  (run with --share)
+Share this analysis: https://sevro.dev/r/9f3a1c  (run with --share)
 ```
 
 ---
@@ -217,7 +217,7 @@ sequenceDiagram
     participant Dev as Developer
     participant Git as Git host
     participant CI as CI runner
-    participant CLI as costify analyze
+    participant CLI as sevro analyze
     participant PR as Pull request
 
     Dev->>Git: push branch with chart change
@@ -235,7 +235,7 @@ sequenceDiagram
 ### GitHub Actions
 
 ```yaml
-name: Costify
+name: Sevro
 on:
   pull_request:
     paths: ["charts/**", "values/**"]
@@ -248,11 +248,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Run Costify
-        run: npx @costify/cost analyze ./charts/api --json > report.json
+      - name: Run Sevro
+        run: npx @sevro/cli analyze ./charts/api --json > report.json
       - name: Comment on PR
         run: |
-          npx @costify/cost analyze ./charts/api \
+          npx @sevro/cli analyze ./charts/api \
             | gh pr comment ${{ github.event.pull_request.number }} --body-file -
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -261,13 +261,13 @@ jobs:
 ### GitLab CI
 
 ```yaml
-costify:
+sevro:
   image: node:20-alpine
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes: [charts/**, values/**]
   script:
-    - npx @costify/cost analyze ./charts/api --json > report.json
+    - npx @sevro/cli analyze ./charts/api --json > report.json
   artifacts:
     paths: [report.json]
 ```
@@ -279,9 +279,9 @@ costify:
 repos:
   - repo: local
     hooks:
-      - id: costify-analyze
-        name: Costify analyze
-        entry: npx @costify/cost analyze
+      - id: sevro-analyze
+        name: Sevro analyze
+        entry: npx @sevro/cli analyze
         language: system
         files: '^charts/.*\.ya?ml$'
         pass_filenames: true
@@ -327,7 +327,7 @@ flowchart TD
 | --- | --- | --- |
 | `--json` | false | Emit machine-readable JSON |
 | `--offline` | true | Do not perform any network calls |
-| `--share` | false | Upload sanitized analysis to costify.dev (opt-in) |
+| `--share` | false | Upload sanitized analysis to sevro.dev (opt-in) |
 | `--no-color` | false | Disable ANSI color in output |
 | `--quiet` | false | Suppress all output except findings |
 | `--budget=<USD>` | unset | Exit non-zero if estimated savings exceed this dollar threshold |
@@ -338,10 +338,10 @@ flowchart TD
 
 | Variable | Purpose |
 | --- | --- |
-| `COSTIFY_NO_COLOR` | Disable color output (CI-friendly, equivalent to `--no-color`) |
-| `COSTIFY_OFFLINE` | Force offline mode |
-| `COSTIFY_SHARE_BASE_URL` | Override the share endpoint (for self-hosted Costify) |
-| `COSTIFY_SKIP_POSTINSTALL` | Skip the npm postinstall binary download (for offline npm caches) |
+| `SEVRO_NO_COLOR` | Disable color output (CI-friendly, equivalent to `--no-color`) |
+| `SEVRO_OFFLINE` | Force offline mode |
+| `SEVRO_SHARE_BASE_URL` | Override the share endpoint (for self-hosted Sevro) |
+| `SEVRO_SKIP_POSTINSTALL` | Skip the npm postinstall binary download (for offline npm caches) |
 
 ---
 
@@ -356,30 +356,37 @@ The CLI was designed to be unambiguously honest about its limitations. Three rul
 > **No telemetry by default.** The CLI does not phone home. It does not collect usage statistics. It does not check for updates over the network unless you explicitly opt in.
 
 > [!IMPORTANT]
-> **`--share` is opt-in only.** When you pass `--share`, a sanitized version of your analysis is uploaded to `costify.dev/r/<hash>` for sharing. Sanitization removes commit author emails, repo paths, and free-text comments. The unsanitized analysis is never sent anywhere.
+> **`--share` is opt-in only.** When you pass `--share`, a sanitized version of your analysis is uploaded to `sevro.dev/r/<hash>` for sharing. Sanitization removes commit author emails, repo paths, and free-text comments. The unsanitized analysis is never sent anywhere.
 
 If you want to verify any of these claims, the entire CLI is Apache 2.0 and lives in this repository. Read the source.
 
 ---
 
-## The Full Costify Platform
+## The Full Sevro Platform
 
-The CLI is one third of Costify. Free, open source, deliberately limited to plus or minus 40 percent accuracy because static files are all it sees. **The full platform turns the CLI's directional findings into exact dollar savings, automated PRs, and cryptographically verified Receipts against your actual cloud bill.**
+Sevro is a three-layer platform. This CLI is the open, free entry point to the first layer. The full platform binds all three with the same trust contract.
+
+| Layer | Component | What it does |
+| --- | --- | --- |
+| 1. Detect | **Sevro Detect** | Cost + security analysis from real Prometheus data and Helm/Kustomize files. The CLI is the offline subset of this. |
+| 2. Fix | **Sevro Apply** | One-click Apply Fix PRs with the exact Helm values diff, gated by `kubectl --dry-run=server` against your live cluster. |
+| 3. Prove | **Sevro Prove** | Ed25519-signed Receipts of realized savings, verified against your AWS / Azure / Hetzner bill. Public, independently verifiable, transparency-logged. |
+
+The CLI is free, open source, deliberately limited to plus or minus 40 percent accuracy because static files are all it sees. **The full platform turns the CLI's directional findings into exact dollar savings, automated PRs, and cryptographically verified Receipts against your actual cloud bill.**
 
 ```mermaid
 flowchart LR
-    PR[Helm or Kustomize PR] --> COMMENT[Costify PR comment<br/>under 30 seconds]
-    COMMENT --> APPLY[Apply Fix button]
-    APPLY --> NEWPR[Auto-generated PR<br/>with Helm values diff]
-    NEWPR --> MERGE[You merge]
+    PR[Helm or Kustomize PR] --> DETECT[Sevro Detect<br/>analysis under 30s]
+    DETECT --> APPLY[Sevro Apply<br/>Apply Fix PR opens]
+    APPLY --> MERGE[You merge]
     MERGE --> WATCH[7-day Auto-Rollback<br/>watchdog]
-    WATCH --> MEASURE[Measure savings<br/>against AWS bill]
-    MEASURE --> RECEIPT[Verified Receipt<br/>Ed25519 signed]
-    RECEIPT --> SHARE[Share with finance,<br/>verify independently]
+    WATCH --> MEASURE[Measure savings<br/>against cloud bill]
+    MEASURE --> PROVE[Sevro Prove<br/>Ed25519 Receipt]
+    PROVE --> SHARE[Share with finance,<br/>verify independently]
 
-    style COMMENT fill:#e7f0ff,stroke:#0a5
+    style DETECT fill:#e7f0ff,stroke:#0a5
     style APPLY fill:#fff7e0,stroke:#a60
-    style RECEIPT fill:#e8fff0,stroke:#0a5
+    style PROVE fill:#e8fff0,stroke:#0a5
 ```
 
 ### What you get when you install the agent
@@ -394,7 +401,7 @@ flowchart LR
 | **Cost Spike detection** — bill anomaly mapped back to the merged PR that caused it | No | Yes |
 | Workload classification — bursty workers sized differently than steady web services | No | Yes |
 | Cluster-aware sizing — Karpenter, Cluster Autoscaler, AKS, GKE, Hetzner | Static only | Yes, all five |
-| GitHub + GitLab integration with @costify thread Q&A | No | Yes |
+| GitHub + GitLab integration with @sevro thread Q&A | No | Yes |
 | Operator-aware fixes — Prometheus Operator, Strimzi, cert-manager, Istio | No | Yes |
 | Slack digest, customer dashboard, multi-cluster fleet view | No | Yes |
 | SOC 2 Type 1, GDPR, EU data residency | n/a | Yes |
@@ -402,13 +409,13 @@ flowchart LR
 ### How customers use it
 
 > [!TIP]
-> **Three-minute path:** paste your `values.yaml` at [costify.dev/sandbox](https://costify.dev/sandbox). No login. See what the SaaS would tell you, with the same plus-or-minus-40-percent disclosure as this CLI.
+> **Three-minute path:** paste your `values.yaml` at [sevro.dev/sandbox](https://sevro.dev/sandbox). No login. See what the SaaS would tell you, with the same plus-or-minus-40-percent disclosure as this CLI.
 
 > [!TIP]
-> **Ten-minute path:** install the GitHub or GitLab App. The next PR you open against any Helm chart in the connected repo gets a Costify comment with cost and security findings. Still sandbox accuracy until you install the agent.
+> **Ten-minute path:** install the GitHub or GitLab App. The next PR you open against any Helm chart in the connected repo gets a Sevro comment with cost and security findings. Still sandbox accuracy until you install the agent.
 
 > [!TIP]
-> **Thirty-minute path:** `helm install costify-agent` in your cluster. Within 30 days you receive your first signed Receipt proving exact dollar savings against your AWS, Azure, or Hetzner bill.
+> **Thirty-minute path:** `helm install sevro-agent` in your cluster. Within 30 days you receive your first signed Receipt proving exact dollar savings against your AWS, Azure, or Hetzner bill.
 
 ### Pricing
 
@@ -420,7 +427,7 @@ flowchart LR
 
 Ship with confidence: every recommendation is paired with a Confidence band, every Apply Fix is gated by `kubectl --dry-run=server` against your live cluster, every merged change is watched for 7 days, and every claimed dollar of savings is signed against the real cloud bill.
 
-[**Try the sandbox**](https://costify.dev/sandbox) - [**Install the agent**](https://costify.dev/get) - [**Book a demo**](https://costify.dev/demo) - [**Read the architecture**](https://costify.dev/how-it-works)
+[**Try the sandbox**](https://sevro.dev/sandbox) - [**Install the agent**](https://sevro.dev/get) - [**Book a demo**](https://sevro.dev/demo) - [**Read the architecture**](https://sevro.dev/how-it-works)
 
 ---
 
@@ -429,7 +436,7 @@ Ship with confidence: every recommendation is paired with a Confidence band, eve
 <details>
 <summary><b>Why is the CLI rule-based instead of LLM-driven?</b></summary>
 
-Determinism. The same chart should produce the same findings every time. LLMs are non-deterministic and would make CI gating unreliable. The LLM-driven Apply Fix flow lives in the [Costify SaaS](https://costify.dev) where every recommendation is paired with measured outcomes via Verified Receipts.
+Determinism. The same chart should produce the same findings every time. LLMs are non-deterministic and would make CI gating unreliable. The LLM-driven Apply Fix flow lives in the [Sevro SaaS](https://sevro.dev) where every recommendation is paired with measured outcomes via Verified Receipts.
 
 </details>
 
@@ -457,14 +464,14 @@ The detector SDK is in development for Q4 2026. Until then, the easiest path is 
 <details>
 <summary><b>Is this a Kubecost competitor?</b></summary>
 
-No. Kubecost is a cluster-installed cost dashboard. We are a static-analysis CLI plus a PR-layer SaaS. Many Costify users also run Kubecost for their dashboard view; the products are complementary.
+No. Kubecost is a cluster-installed cost dashboard. We are a static-analysis CLI plus a PR-layer SaaS. Many Sevro users also run Kubecost for their dashboard view; the products are complementary.
 
 </details>
 
 <details>
 <summary><b>How do I report a security issue?</b></summary>
 
-See [SECURITY.md](SECURITY.md). Email `security@costify.dev`. Do not open public GitHub issues for security bugs.
+See [SECURITY.md](SECURITY.md). Email `security@sevro.dev`. Do not open public GitHub issues for security bugs.
 
 </details>
 
@@ -488,8 +495,20 @@ Good first issues are labeled [`good-first-issue`](https://github.com/lowplane/c
 
 - **Discussions** — [github.com/lowplane/cli/discussions](https://github.com/lowplane/cli/discussions)
 - **Issues** — [github.com/lowplane/cli/issues](https://github.com/lowplane/cli/issues)
-- **Security** — `security@costify.dev` (see [SECURITY.md](SECURITY.md))
-- **General** — [`hello@costify.dev`](mailto:hello@costify.dev)
+- **Security** — `security@sevro.dev` (see [SECURITY.md](SECURITY.md))
+- **General** — [`hello@sevro.dev`](mailto:hello@sevro.dev)
+
+---
+
+## About the name
+
+Sevro is a backronym for the three things every Kubernetes change needs and that nobody currently provides as one platform:
+
+- **S**avings
+- **E**vidence
+- **R**emediation **O**ps
+
+Detect waste, fix it, prove it. The product architecture, restated as the brand.
 
 ---
 
@@ -498,8 +517,8 @@ Good first issues are labeled [`good-first-issue`](https://github.com/lowplane/c
 Apache License 2.0. See [LICENSE](LICENSE).
 
 > [!NOTE]
-> The CLI is the only part of Costify that is open source. The SaaS backend, in-cluster agent, and Apply Fix infrastructure are proprietary. The CLI is independently buildable, independently auditable, and independently licensable; it never imports proprietary code.
+> The CLI is the only part of Sevro that is open source. The SaaS backend, in-cluster agent, and Apply Fix infrastructure are proprietary. The CLI is independently buildable, independently auditable, and independently licensable; it never imports proprietary code.
 
 ---
 
-<sub>Costify is a product of Costify, Inc. Trademark and brand assets are not licensed under Apache 2.0.</sub>
+<sub>Sevro is a product of Sevro, Inc. Trademark and brand assets are not licensed under Apache 2.0.</sub>

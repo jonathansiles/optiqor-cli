@@ -1,14 +1,14 @@
-# Contributing to Costify CLI
+# Contributing to Sevro CLI
 
-Thanks for considering a contribution. The CLI is the open, auditable surface of Costify — everything in here is Apache-2.0 and stays that way.
+Thanks for considering a contribution. The CLI is the open, auditable surface of Sevro — everything in here is Apache-2.0 and stays that way.
 
 ## Quickstart
 
 ```sh
 git clone https://github.com/lowplane/cli cli
 cd cli
-make build              # produces ./bin/costify
-./bin/costify --version
+make build              # produces ./bin/sevro
+./bin/sevro --version
 make test
 ```
 

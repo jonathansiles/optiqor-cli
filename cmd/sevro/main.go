@@ -1,4 +1,4 @@
-// Command costify is the entrypoint for the open-source Costify CLI.
+// Command sevro is the entrypoint for the open-source Sevro CLI.
 //
 // The CLI is a deterministic rule engine that analyzes Helm charts for cost
 // inefficiencies and security findings. It does NOT call any LLM and does NOT
@@ -14,7 +14,7 @@ import (
 
 var version = "dev"
 
-const accuracyDisclosure = "Sandbox accuracy: ±40%. Install the Costify agent for exact numbers (costify.dev/get)."
+const accuracyDisclosure = "Sandbox accuracy: ±40%. Install the Sevro agent for exact numbers (sevro.dev/get)."
 
 func main() {
 	if err := newRootCmd().Execute(); err != nil {
@@ -24,9 +24,9 @@ func main() {
 
 func newRootCmd() *cobra.Command {
 	root := &cobra.Command{
-		Use:           "costify",
+		Use:           "sevro",
 		Short:         "Cost & security analysis for Kubernetes Helm charts",
-		Long:          "costify analyzes Helm charts (or values files) for cost inefficiencies and security findings.\n\n" + accuracyDisclosure,
+		Long:          "sevro analyzes Helm charts (or values files) for cost inefficiencies and security findings.\n\n" + accuracyDisclosure,
 		Version:       version,
 		SilenceUsage:  true,
 		SilenceErrors: false,
@@ -67,7 +67,7 @@ func newAnalyzeCmd() *cobra.Command {
 	}
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "emit machine-readable JSON")
 	cmd.Flags().BoolVar(&offline, "offline", false, "do not perform any network calls (default true for analyze)")
-	cmd.Flags().BoolVar(&share, "share", false, "upload sanitized analysis to costify.dev/r/<hash> (opt-in)")
+	cmd.Flags().BoolVar(&share, "share", false, "upload sanitized analysis to sevro.dev/r/<hash> (opt-in)")
 	cmd.Flags().BoolVar(&roast, "roast", false, "humorous output (findings stay accurate)")
 	return cmd
 }
@@ -137,5 +137,5 @@ func newCompareCmd() *cobra.Command {
 }
 
 func notYetImplemented(cmd *cobra.Command) error {
-	return fmt.Errorf("`costify %s` is not yet implemented (see https://costify.dev/roadmap)", cmd.Name())
+	return fmt.Errorf("`sevro %s` is not yet implemented (see https://sevro.dev/roadmap)", cmd.Name())
 }
