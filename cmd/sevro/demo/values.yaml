@@ -1,0 +1,43 @@
+# Demo chart — exercises both Year-1 detectors.
+# - `api`     triggers cpu-overprovisioned (request very close to limit)
+# - `worker`  triggers missing-memory-limit (request set, no limit)
+# - `cache`   is well-configured and produces no findings
+
+api:
+  image:
+    repository: example/api
+    tag: "1.4.2"
+  replicas: 3
+  resources:
+    requests:
+      cpu: "2"
+      memory: "1Gi"
+    limits:
+      cpu: "2.5"
+      memory: "2Gi"
+
+worker:
+  image:
+    repository: example/worker
+    tag: "0.9.0"
+  replicas: 2
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      # memory limit deliberately missing
+
+cache:
+  image:
+    repository: redis
+    tag: "7"
+  replicas: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
