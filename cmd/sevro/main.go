@@ -6,10 +6,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"github.com/lowplane/sevro/internal/analyze"
+	"github.com/lowplane/sevro/internal/render"
 )
 
 var version = "dev"
@@ -56,30 +62,80 @@ func newAnalyzeCmd() *cobra.Command {
 		Use:   "analyze [chart]",
 		Short: "Analyze a Helm chart or values file for cost & security findings",
 		Args:  cobra.MaximumNArgs(1),
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			// TODO(phase-3): wire internal/analyze, internal/parser, internal/rules, internal/render.
-			_ = jsonOut
+		RunE: func(cmd *cobra.Command, args []string) error {
+			path := "."
+			if len(args) == 1 {
+				path = args[0]
+			}
+			abs, err := filepath.Abs(path)
+			if err != nil {
+				return err
+			}
+			rep, err := analyze.RunPath(abs)
+			if err != nil {
+				return err
+			}
+			if jsonOut {
+				return render.JSON(cmd.OutOrStdout(), rep)
+			}
+			// `--share` and `--roast` are accepted now so flags land in
+			// muscle memory; their behavior arrives in later phases.
 			_ = offline
 			_ = share
 			_ = roast
-			return notYetImplemented(cmd)
+			return render.Text(cmd.OutOrStdout(), rep)
 		},
 	}
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "emit machine-readable JSON")
-	cmd.Flags().BoolVar(&offline, "offline", false, "do not perform any network calls (default true for analyze)")
+	cmd.Flags().BoolVar(&offline, "offline", true, "do not perform any network calls (always true in Phase 1)")
 	cmd.Flags().BoolVar(&share, "share", false, "upload sanitized analysis to sevro.dev/r/<hash> (opt-in)")
 	cmd.Flags().BoolVar(&roast, "roast", false, "humorous output (findings stay accurate)")
 	return cmd
 }
 
+// demoChart is the bundled demo values file. //go:embed lets us ship
+// the fixture inside the binary so `npx @sevro/cli demo` works with
+// no input.
+//
+//go:embed demo/values.yaml
+var demoChart []byte
+
 func newDemoCmd() *cobra.Command {
-	return &cobra.Command{
+	var jsonOut bool
+	cmd := &cobra.Command{
 		Use:   "demo",
 		Short: "Run analysis on a bundled demo chart",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			return notYetImplemented(cmd)
+			rep, err := analyze.Run(bytesReader(demoChart), analyze.Options{Source: "demo"})
+			if err != nil {
+				return err
+			}
+			if jsonOut {
+				return render.JSON(cmd.OutOrStdout(), rep)
+			}
+			return render.Text(cmd.OutOrStdout(), rep)
 		},
 	}
+	cmd.Flags().BoolVar(&jsonOut, "json", false, "emit machine-readable JSON")
+	return cmd
+}
+
+// bytesReader is a tiny adapter so analyze.Run can read from a byte slice
+// without pulling in bytes.NewReader at the import-graph root of main.
+func bytesReader(b []byte) *bytesReaderImpl { return &bytesReaderImpl{b: b} }
+
+type bytesReaderImpl struct {
+	b []byte
+	i int
+}
+
+func (r *bytesReaderImpl) Read(p []byte) (int, error) {
+	if r.i >= len(r.b) {
+		return 0, io.EOF
+	}
+	n := copy(p, r.b[r.i:])
+	r.i += n
+	return n, nil
 }
 
 func newDiffCmd() *cobra.Command {
