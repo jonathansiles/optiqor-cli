@@ -14,16 +14,44 @@ import (
 // the Kubernetes API: the same shape supports `Deployment`, `StatefulSet`,
 // `CronJob`, etc.
 type Workload struct {
-	Name     string       // YAML key path joined by "." (e.g. "api", "subchart.worker")
-	Kind     string       // best-effort: "Deployment" by default
-	Requests ResourceList //
-	Limits   ResourceList //
+	Name     string
+	Kind     string
+	Requests ResourceList
+	Limits   ResourceList
+	Image    ImageRef
 }
 
 // ResourceList captures the CPU and memory of either requests or limits.
 type ResourceList struct {
 	CPU    Quantity
 	Memory Quantity
+}
+
+// ImageRef captures the container image declared on a workload. Helm
+// charts use two common patterns:
+//
+//	image: nginx:1.4.2                      -- single string
+//	image:
+//	  repository: nginx                     -- map with keys
+//	  tag: "1.4.2"
+//
+// We accept both. Tag == "" indicates a missing/implicit tag, which
+// Kubernetes treats as `:latest`.
+type ImageRef struct {
+	Repository string
+	Tag        string
+	Set        bool
+}
+
+// String renders the ImageRef as repository:tag (or repository when no tag).
+func (i ImageRef) String() string {
+	if !i.Set {
+		return ""
+	}
+	if i.Tag == "" {
+		return i.Repository
+	}
+	return i.Repository + ":" + i.Tag
 }
 
 // ParseValues reads a Helm values.yaml stream and returns every workload
@@ -80,6 +108,9 @@ func walk(n *yaml.Node, path string, out *[]Workload) {
 				if lims := findChild(res, "limits"); lims != nil {
 					wl.Limits = readResourceList(lims)
 				}
+				if img := findChild(v, "image"); img != nil {
+					wl.Image = readImage(img)
+				}
 				*out = append(*out, wl)
 			}
 			walk(v, childPath, out)
@@ -112,6 +143,58 @@ func readResourceList(n *yaml.Node) ResourceList {
 		}
 	}
 	return rl
+}
+
+// readImage handles both Helm patterns: a scalar `image: repo:tag`
+// or a mapping `image: {repository: ..., tag: ...}`.
+func readImage(n *yaml.Node) ImageRef {
+	if n == nil {
+		return ImageRef{}
+	}
+	switch n.Kind {
+	case yaml.ScalarNode:
+		s := n.Value
+		if s == "" {
+			return ImageRef{}
+		}
+		// Find rightmost ':' that isn't part of a port (we ignore ports
+		// since we just care about tag presence).
+		repo, tag := splitImage(s)
+		return ImageRef{Repository: repo, Tag: tag, Set: true}
+	case yaml.MappingNode:
+		ref := ImageRef{}
+		for i := 0; i+1 < len(n.Content); i += 2 {
+			k, v := n.Content[i], n.Content[i+1]
+			if k.Kind != yaml.ScalarNode || v.Kind != yaml.ScalarNode {
+				continue
+			}
+			switch k.Value {
+			case "repository", "name":
+				ref.Repository = v.Value
+				ref.Set = true
+			case "tag":
+				ref.Tag = v.Value
+				ref.Set = true
+			}
+		}
+		return ref
+	}
+	return ImageRef{}
+}
+
+// splitImage parses "repo:tag" → ("repo", "tag"). When no tag is
+// present, returns (s, "").
+func splitImage(s string) (repo, tag string) {
+	idx := -1
+	for i := 0; i < len(s); i++ {
+		if s[i] == ':' {
+			idx = i
+		}
+	}
+	if idx < 0 {
+		return s, ""
+	}
+	return s[:idx], s[idx+1:]
 }
 
 func findChild(n *yaml.Node, key string) *yaml.Node {
