@@ -76,7 +76,9 @@ func TestDemo_RunsAndIncludesDisclosure(t *testing.T) {
 }
 
 // TestAnalyze_FixtureFile exercises the analyze command against the
-// versioned testdata fixture.
+// versioned testdata fixture. Asserts the well-known severities and
+// detectors fire; lets the count grow naturally as the detector
+// library expands.
 func TestAnalyze_FixtureFile(t *testing.T) {
 	cmd := newRootCmd()
 	var buf bytes.Buffer
@@ -87,7 +89,22 @@ func TestAnalyze_FixtureFile(t *testing.T) {
 		t.Fatalf("execute analyze: %v\n%s", err, buf.String())
 	}
 	out := buf.String()
-	for _, want := range []string{"3 workloads", "2 findings", "HIGH", "MED", "$29.20"} {
+	// Severity badges + workload names appear on the per-finding line;
+	// the renderer prints them as bare identifiers rather than as
+	// "workload: <name>".
+	for _, want := range []string{
+		"5 workloads",
+		"HIGH",
+		"MED",
+		"LOW",
+		"api",
+		"worker",
+		"cache",
+		"logger",
+		"CPU request appears overprovisioned",
+		"Memory limit not set",
+		"Image not pinned to a stable tag",
+	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("missing %q in analyze output:\n%s", want, out)
 		}
@@ -108,9 +125,12 @@ func TestAnalyze_JSONShape(t *testing.T) {
 	out := buf.String()
 	for _, want := range []string{
 		`"accuracy_disclosure"`,
-		`"workloads_analyzed": 3`,
+		`"workloads_analyzed": 5`,
 		`"DetectorID": "cpu-overprovisioned"`,
+		`"DetectorID": "memory-overprovisioned"`,
 		`"DetectorID": "missing-memory-limit"`,
+		`"DetectorID": "missing-cpu-limit"`,
+		`"DetectorID": "image-pinned-latest"`,
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("missing %q in JSON output:\n%s", want, out)
