@@ -1,84 +1,505 @@
-# Costify CLI
+# Costify
 
-> Cost & security analysis for Kubernetes Helm charts, from your terminal. No login. No agent. No cluster connection required.
+**Cost and security analysis for Kubernetes Helm charts, from your terminal.**
+No login. No agent. No cluster connection required.
 
-[![npm version](https://img.shields.io/npm/v/@costify/cost.svg)](https://www.npmjs.com/package/@costify/cost)
-[![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@costify/cost.svg?label=%40costify%2Fcost&color=blue)](https://www.npmjs.com/package/@costify/cost)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/lowplane/cli.svg)](https://pkg.go.dev/github.com/lowplane/cli)
+[![CI](https://img.shields.io/github/actions/workflow/status/lowplane/cli/ci.yml?branch=main&label=ci)](https://github.com/lowplane/cli/actions/workflows/ci.yml)
+[![Downloads](https://img.shields.io/npm/dm/@costify/cost.svg)](https://www.npmjs.com/package/@costify/cost)
 
 ```sh
 npx @costify/cost analyze ./my-helm-chart
 ```
 
-## What it does
+That is it. One command. No setup. No account. Cost and security findings for your Kubernetes workloads in under three seconds.
 
-Reads a Helm chart (or just a `values.yaml`) and reports cost inefficiencies and security findings, with a shareable URL and a one-line install command for the full Costify agent if you want exact numbers.
+---
 
-```
-$ npx @costify/cost demo
+## Table of Contents
 
-Costify Sandbox Analysis  ────────────────────  costify.dev
-chart: bitnami/postgresql (demo)
+- [Why Costify CLI](#why-costify-cli)
+- [Install](#install)
+- [Quick Start](#quick-start)
+- [How It Works](#how-it-works)
+- [Commands](#commands)
+- [Example Output](#example-output)
+- [CI/CD Integration](#cicd-integration)
+- [CLI vs Agent vs Sandbox](#cli-vs-agent-vs-sandbox)
+- [Configuration](#configuration)
+- [Privacy and Accuracy](#privacy-and-accuracy)
+- [The Full Costify Platform](#the-full-costify-platform)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [License](#license)
 
-Findings (3)
-  [HIGH]  Overprovisioned CPU request    save ~$340/mo  confidence: medium
-  [MED]   Missing memory limit            risk: OOM noisy-neighbor
-  [LOW]   Image pinned to :latest         risk: unreproducible deploy
+---
 
-Estimated monthly cost     $1,140
-Estimated monthly savings  $340 (30%)
+## Why Costify CLI
 
-Sandbox accuracy: ±40%. Install the Costify agent for exact numbers:
-  costify.dev/get
+Most Kubernetes cost tools require you to install an agent in your cluster, expose Prometheus, and wait 30 days for data. That is the right call for production teams who need exact numbers.
 
-Share this analysis: costify.dev/r/9f3a1c
-```
+But sometimes you just want a directional answer **right now** about a chart you are reviewing.
+
+The Costify CLI is a deterministic rule engine that reads your Helm chart files (or `values.yaml`) and reports cost inefficiencies and security risks in seconds. It runs fully offline. It does not phone home. It is honest about what it can and cannot tell from static files alone.
+
+> [!NOTE]
+> The CLI gives you **directional signal**, not exact numbers. For exact dollar savings backed by 30 days of real Prometheus data and your AWS bill, install the [Costify agent](https://costify.dev/get) in your cluster.
+
+---
 
 ## Install
 
-### npx (recommended)
+### Option 1: npx (zero-install, recommended for one-off use)
 
 ```sh
 npx @costify/cost analyze ./chart
 ```
 
-### Global
+### Option 2: Global npm install
 
 ```sh
 npm install -g @costify/cost
 costify analyze ./chart
 ```
 
-### From source
+### Option 3: Go install
 
 ```sh
-go install github.com/costify/cli/cmd/costify@latest
+go install github.com/lowplane/cli/cmd/costify@latest
 ```
+
+### Option 4: Download a release binary
+
+Pre-built binaries for Linux (amd64, arm64) and macOS (amd64, arm64) are published on every tagged release.
+
+```sh
+# Linux amd64
+curl -L https://github.com/lowplane/cli/releases/latest/download/costify_linux_amd64.tar.gz | tar -xz
+sudo mv costify /usr/local/bin/
+```
+
+> [!TIP]
+> All release artifacts are signed with [Cosign](https://docs.sigstore.dev/cosign/overview/). Verification instructions on the [release page](https://github.com/lowplane/cli/releases).
+
+---
+
+## Quick Start
+
+```sh
+# Run the bundled demo (no input needed)
+npx @costify/cost demo
+
+# Analyze a chart directory
+npx @costify/cost analyze ./my-chart
+
+# Analyze a single values file
+npx @costify/cost analyze ./values.production.yaml
+
+# Compare two values files
+npx @costify/cost diff ./values.dev.yaml ./values.prod.yaml
+
+# Score a chart against best practices (0-100)
+npx @costify/cost score ./my-chart
+
+# Get JSON output for tooling
+npx @costify/cost analyze ./my-chart --json | jq '.findings[]'
+```
+
+---
+
+## How It Works
+
+```mermaid
+flowchart LR
+    A[Helm chart<br/>or values.yaml] --> B[Parser]
+    B --> C[Normalized<br/>workload model]
+    C --> D[Detectors]
+
+    subgraph Detectors
+      direction TB
+      D1[Cost rules<br/>15+]
+      D2[Security rules<br/>15+]
+    end
+
+    D --> D1
+    D --> D2
+    D1 --> E[Findings]
+    D2 --> E
+    E --> F[Confidence band<br/>Low / Med / High]
+    F --> G[Report]
+
+    G --> H1[ASCII table<br/>default]
+    G --> H2[JSON<br/>--json]
+    G --> H3[Shareable URL<br/>--share, opt-in]
+
+    style A fill:#e7f0ff,stroke:#0a5
+    style G fill:#e8fff0,stroke:#0a5
+    style H3 stroke-dasharray: 5 5
+```
+
+The pipeline is deterministic. The same input always produces the same output. There are no LLM calls in the CLI itself; the LLM-driven Apply Fix flow lives in the SaaS backend.
+
+---
 
 ## Commands
 
-| Command | What it does |
+| Command | Purpose | Status |
+| --- | --- | --- |
+| `analyze [chart]` | Run full cost and security analysis on a chart or values file | Stable |
+| `demo` | Run analysis on a bundled demo chart | Stable |
+| `diff <a> <b>` | Show cost delta between two values files | Stable |
+| `score [chart]` | Assign a 0-100 efficiency score | Stable |
+| `audit [chart]` | Security findings only (no cost) | Beta |
+| `watch [chart]` | Re-analyze on file change | Beta |
+| `compare <a> <b>` | Side-by-side comparison of two charts | Beta |
+| `--version` | Print version and exit | Stable |
+| `--help` | Help for any command | Stable |
+
+Every command supports `--json`, `--offline`, `--no-color`, and `--quiet`.
+
+---
+
+## Example Output
+
+```
+$ npx @costify/cost analyze ./charts/postgresql
+
+Costify Analysis ----------------------------------- costify.dev
+chart      bitnami/postgresql 12.5.7
+namespace  database
+context    static analysis from values.yaml
+
+Cost findings (3)
+  [HIGH]   Overprovisioned CPU request           save ~$340/mo   confidence: medium
+           primary.resources.requests.cpu = 4    suggested: 1.5
+           reason: 90th percentile sandbox baseline for similar charts
+
+  [MED]    Persistent volume size oversized      save ~$80/mo    confidence: low
+           primary.persistence.size = 100Gi      suggested: 30Gi
+           reason: declared size 3x typical for this chart pattern
+
+  [LOW]    No autoscaling configured             save ~$45/mo    confidence: low
+           primary.replicaCount = 3 (static)
+           reason: HPA could right-size off-hours
+
+Security findings (2)
+  [MED]    Missing memory limit on primary container
+           risk: OOM noisy-neighbor; pod may be evicted under memory pressure
+           CIS Kubernetes Benchmark 5.7.4
+
+  [LOW]    Image tag is ":latest"
+           risk: unreproducible deploys, no rollback target
+           CIS Kubernetes Benchmark 5.5.1
+
+Summary
+  estimated monthly cost      $1,140
+  estimated monthly savings   $465 (40 percent)
+  efficiency score            58 / 100
+
+Sandbox accuracy: plus or minus 40 percent. Install the Costify agent for
+exact numbers backed by 30 days of real Prometheus data and your AWS bill:
+  https://costify.dev/get
+
+Share this analysis: https://costify.dev/r/9f3a1c  (run with --share)
+```
+
+---
+
+## CI/CD Integration
+
+The CLI is designed to run inside a CI pipeline. Use exit codes to gate merges, or post the report as a PR comment.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Dev as Developer
+    participant Git as Git host
+    participant CI as CI runner
+    participant CLI as costify analyze
+    participant PR as Pull request
+
+    Dev->>Git: push branch with chart change
+    Git->>CI: webhook fires
+    CI->>CLI: analyze ./chart --json --budget=400
+    CLI-->>CI: findings, exit code
+    alt findings exceed budget
+        CI->>PR: block merge, post comment
+    else findings within budget
+        CI->>PR: post advisory comment
+    end
+    Dev->>PR: review and merge
+```
+
+### GitHub Actions
+
+```yaml
+name: Costify
+on:
+  pull_request:
+    paths: ["charts/**", "values/**"]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run Costify
+        run: npx @costify/cost analyze ./charts/api --json > report.json
+      - name: Comment on PR
+        run: |
+          npx @costify/cost analyze ./charts/api \
+            | gh pr comment ${{ github.event.pull_request.number }} --body-file -
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### GitLab CI
+
+```yaml
+costify:
+  image: node:20-alpine
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes: [charts/**, values/**]
+  script:
+    - npx @costify/cost analyze ./charts/api --json > report.json
+  artifacts:
+    paths: [report.json]
+```
+
+### pre-commit
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: costify-analyze
+        name: Costify analyze
+        entry: npx @costify/cost analyze
+        language: system
+        files: '^charts/.*\.ya?ml$'
+        pass_filenames: true
+```
+
+---
+
+## CLI vs Agent vs Sandbox
+
+```mermaid
+flowchart TD
+    A[Need Kubernetes cost<br/>and security analysis] --> B{Where do you<br/>start from?}
+
+    B -->|Just chart files,<br/>no cluster yet| C[CLI]
+    B -->|Cluster running,<br/>want exact dollars| D[Full agent]
+    B -->|Want to try in<br/>3 minutes, no install| E[Web sandbox]
+
+    C --> C1[Runs offline<br/>plus or minus 40 percent accuracy<br/>No login<br/>Free, Apache 2.0]
+    D --> D1[Real Prometheus data<br/>plus or minus 10 to 15 percent accuracy<br/>Verified Receipts vs AWS bill<br/>Apply Fix automation]
+    E --> E1[Paste values.yaml in browser<br/>Same accuracy as CLI<br/>Shareable URL]
+
+    C1 -.->|Upgrade path| D1
+    E1 -.->|Upgrade path| D1
+
+    style C fill:#e7f0ff,stroke:#0a5
+    style D fill:#fff7e0,stroke:#a60
+    style E fill:#f0e7ff,stroke:#60a
+```
+
+| Surface | Accuracy | Setup | When to use |
+| --- | --- | --- | --- |
+| **Web sandbox** | plus or minus 40 percent | None, paste in browser | Curiosity, sharing a one-off finding |
+| **CLI** (this repo) | plus or minus 40 percent | One npx command | PR review, CI gating, offline workflows |
+| **Full agent + SaaS** | plus or minus 10 to 15 percent | Helm install, ~30 minutes | Production teams, paying customers, verified Receipts |
+
+---
+
+## Configuration
+
+### Flags
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--json` | false | Emit machine-readable JSON |
+| `--offline` | true | Do not perform any network calls |
+| `--share` | false | Upload sanitized analysis to costify.dev (opt-in) |
+| `--no-color` | false | Disable ANSI color in output |
+| `--quiet` | false | Suppress all output except findings |
+| `--budget=<USD>` | unset | Exit non-zero if estimated savings exceed this dollar threshold |
+| `--ignore=<rule-id,...>` | empty | Skip specific detector rules |
+| `--namespace=<name>` | unset | Filter to a single namespace if the chart deploys to multiple |
+
+### Environment Variables
+
+| Variable | Purpose |
 | --- | --- |
-| `analyze <chart>` | Run cost + security analysis on a Helm chart or values file |
-| `demo` | Run analysis on a bundled demo chart |
-| `diff <a> <b>` | Show cost delta between two values files |
-| `score <chart>` | Assign a 0–100 efficiency score |
+| `COSTIFY_NO_COLOR` | Disable color output (CI-friendly, equivalent to `--no-color`) |
+| `COSTIFY_OFFLINE` | Force offline mode |
+| `COSTIFY_SHARE_BASE_URL` | Override the share endpoint (for self-hosted Costify) |
+| `COSTIFY_SKIP_POSTINSTALL` | Skip the npm postinstall binary download (for offline npm caches) |
 
-More commands (`audit`, `watch`, `compare`) ship over the next 12 months.
+---
 
-## Honesty about accuracy
+## Privacy and Accuracy
 
-The CLI gives you **directional** signal (±40%) from Helm files alone. For exact numbers — backed by 30 days of real Prometheus data plus your AWS bill — install the Costify agent in your cluster. We deliberately keep the CLI honest about what it can and can't tell you from static files.
+The CLI was designed to be unambiguously honest about its limitations. Three rules baked into the binary:
 
-## Privacy
+> [!IMPORTANT]
+> **Accuracy is plus or minus 40 percent.** Every analysis output ends with a disclosure stating this. If you need exact numbers, you need real cluster metrics. The CLI deliberately cannot give you that.
 
-- **No telemetry.** The CLI does not phone home.
-- **`--share` is opt-in.** Only when you explicitly pass `--share` do we upload a sanitized analysis to `costify.dev/r/<hash>` for sharing.
-- **`--offline` works.** `analyze` runs entirely locally by default.
+> [!IMPORTANT]
+> **No telemetry by default.** The CLI does not phone home. It does not collect usage statistics. It does not check for updates over the network unless you explicitly opt in.
+
+> [!IMPORTANT]
+> **`--share` is opt-in only.** When you pass `--share`, a sanitized version of your analysis is uploaded to `costify.dev/r/<hash>` for sharing. Sanitization removes commit author emails, repo paths, and free-text comments. The unsanitized analysis is never sent anywhere.
+
+If you want to verify any of these claims, the entire CLI is Apache 2.0 and lives in this repository. Read the source.
+
+---
+
+## The Full Costify Platform
+
+The CLI is one third of Costify. Free, open source, deliberately limited to plus or minus 40 percent accuracy because static files are all it sees. **The full platform turns the CLI's directional findings into exact dollar savings, automated PRs, and cryptographically verified Receipts against your actual cloud bill.**
+
+```mermaid
+flowchart LR
+    PR[Helm or Kustomize PR] --> COMMENT[Costify PR comment<br/>under 30 seconds]
+    COMMENT --> APPLY[Apply Fix button]
+    APPLY --> NEWPR[Auto-generated PR<br/>with Helm values diff]
+    NEWPR --> MERGE[You merge]
+    MERGE --> WATCH[7-day Auto-Rollback<br/>watchdog]
+    WATCH --> MEASURE[Measure savings<br/>against AWS bill]
+    MEASURE --> RECEIPT[Verified Receipt<br/>Ed25519 signed]
+    RECEIPT --> SHARE[Share with finance,<br/>verify independently]
+
+    style COMMENT fill:#e7f0ff,stroke:#0a5
+    style APPLY fill:#fff7e0,stroke:#a60
+    style RECEIPT fill:#e8fff0,stroke:#0a5
+```
+
+### What you get when you install the agent
+
+| Capability | CLI (this) | Full Platform |
+| --- | --- | --- |
+| Cost analysis from chart files | Yes | Yes, plus exact numbers from real Prometheus |
+| Security findings on every PR | Yes (CI gate only) | Yes (PR comment, no CI setup needed) |
+| **Apply Fix** — one-click PR with the exact Helm diff | No | Yes |
+| **Verified Receipts** — Ed25519-signed proof of savings against your AWS bill | No | Yes |
+| **Auto-Rollback Guarantee** — 7-day post-merge watchdog opens a rollback PR if metrics drift | No | Yes |
+| **Cost Spike detection** — bill anomaly mapped back to the merged PR that caused it | No | Yes |
+| Workload classification — bursty workers sized differently than steady web services | No | Yes |
+| Cluster-aware sizing — Karpenter, Cluster Autoscaler, AKS, GKE, Hetzner | Static only | Yes, all five |
+| GitHub + GitLab integration with @costify thread Q&A | No | Yes |
+| Operator-aware fixes — Prometheus Operator, Strimzi, cert-manager, Istio | No | Yes |
+| Slack digest, customer dashboard, multi-cluster fleet view | No | Yes |
+| SOC 2 Type 1, GDPR, EU data residency | n/a | Yes |
+
+### How customers use it
+
+> [!TIP]
+> **Three-minute path:** paste your `values.yaml` at [costify.dev/sandbox](https://costify.dev/sandbox). No login. See what the SaaS would tell you, with the same plus-or-minus-40-percent disclosure as this CLI.
+
+> [!TIP]
+> **Ten-minute path:** install the GitHub or GitLab App. The next PR you open against any Helm chart in the connected repo gets a Costify comment with cost and security findings. Still sandbox accuracy until you install the agent.
+
+> [!TIP]
+> **Thirty-minute path:** `helm install costify-agent` in your cluster. Within 30 days you receive your first signed Receipt proving exact dollar savings against your AWS, Azure, or Hetzner bill.
+
+### Pricing
+
+| Plan | Price | What is included |
+| --- | --- | --- |
+| **Free** | $0 forever | 2 clusters, one verified Receipt per month, all detectors |
+| **Team** | $500 / month | 5 clusters, unlimited Receipts, Slack digest, dashboard |
+| **Enterprise** | Custom | Unlimited clusters, dedicated CSM, SLA, in-VPC option, EU residency |
+
+Ship with confidence: every recommendation is paired with a Confidence band, every Apply Fix is gated by `kubectl --dry-run=server` against your live cluster, every merged change is watched for 7 days, and every claimed dollar of savings is signed against the real cloud bill.
+
+[**Try the sandbox**](https://costify.dev/sandbox) - [**Install the agent**](https://costify.dev/get) - [**Book a demo**](https://costify.dev/demo) - [**Read the architecture**](https://costify.dev/how-it-works)
+
+---
+
+## FAQ
+
+<details>
+<summary><b>Why is the CLI rule-based instead of LLM-driven?</b></summary>
+
+Determinism. The same chart should produce the same findings every time. LLMs are non-deterministic and would make CI gating unreliable. The LLM-driven Apply Fix flow lives in the [Costify SaaS](https://costify.dev) where every recommendation is paired with measured outcomes via Verified Receipts.
+
+</details>
+
+<details>
+<summary><b>Does this work on my Kustomize / ArgoCD / Flux setup?</b></summary>
+
+Yes for any setup that produces Helm-renderable YAML. The CLI parses the rendered output, not the source format. ArgoCD `Application` manifests with Helm sources work directly. Flux `HelmRelease` resources work directly. Kustomize overlays work after `kustomize build`.
+
+</details>
+
+<details>
+<summary><b>What about my Hetzner / on-prem / AKS / GKE cluster?</b></summary>
+
+The CLI is cluster-agnostic. It reads chart files; it does not care where the cluster runs. Note that **dollar estimates** in the output assume AWS pricing today. EUR-denominated estimates for Hetzner customers ship in Q3 2026 alongside the EU GA of the SaaS.
+
+</details>
+
+<details>
+<summary><b>How do I extend it with my own detectors?</b></summary>
+
+The detector SDK is in development for Q4 2026. Until then, the easiest path is to fork this repo and add a detector in `internal/rules/`. PRs adding genuinely useful new detectors are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+</details>
+
+<details>
+<summary><b>Is this a Kubecost competitor?</b></summary>
+
+No. Kubecost is a cluster-installed cost dashboard. We are a static-analysis CLI plus a PR-layer SaaS. Many Costify users also run Kubecost for their dashboard view; the products are complementary.
+
+</details>
+
+<details>
+<summary><b>How do I report a security issue?</b></summary>
+
+See [SECURITY.md](SECURITY.md). Email `security@costify.dev`. Do not open public GitHub issues for security bugs.
+
+</details>
+
+---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). All contributions land under Apache-2.0; we use DCO sign-off.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. Highlights:
+
+- All commits use [Conventional Commits](https://www.conventionalcommits.org/) (`feat(parser): support kustomize overlays`)
+- All commits require DCO sign-off (`git commit -s`)
+- Behavior changes need a golden test in `testdata/fixtures/`
+- No LLM calls, no telemetry, no Windows-specific code paths (these are project-defining constraints)
+- See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+Good first issues are labeled [`good-first-issue`](https://github.com/lowplane/cli/labels/good-first-issue).
+
+---
+
+## Community
+
+- **Discussions** — [github.com/lowplane/cli/discussions](https://github.com/lowplane/cli/discussions)
+- **Issues** — [github.com/lowplane/cli/issues](https://github.com/lowplane/cli/issues)
+- **Security** — `security@costify.dev` (see [SECURITY.md](SECURITY.md))
+- **General** — [`hello@costify.dev`](mailto:hello@costify.dev)
+
+---
 
 ## License
 
-Apache 2.0. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE).
+
+> [!NOTE]
+> The CLI is the only part of Costify that is open source. The SaaS backend, in-cluster agent, and Apply Fix infrastructure are proprietary. The CLI is independently buildable, independently auditable, and independently licensable; it never imports proprietary code.
+
+---
+
+<sub>Costify is a product of Costify, Inc. Trademark and brand assets are not licensed under Apache 2.0.</sub>
