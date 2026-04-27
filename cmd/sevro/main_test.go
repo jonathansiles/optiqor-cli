@@ -178,12 +178,12 @@ func TestAtoi(t *testing.T) {
 		want int
 		err  bool
 	}{
-		"":     {0, false},
-		"0":    {0, false},
-		"123":  {123, false},
-		"abc":  {0, true},
-		"12x":  {0, true},
-		"99":   {99, false},
+		"":    {0, false},
+		"0":   {0, false},
+		"123": {123, false},
+		"abc": {0, true},
+		"12x": {0, true},
+		"99":  {99, false},
 	}
 	for in, tc := range cases {
 		got, err := atoi(in)

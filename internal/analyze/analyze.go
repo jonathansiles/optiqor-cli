@@ -10,8 +10,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/lowplane/sevro/pkg/parser"
 	"github.com/lowplane/sevro/internal/render"
+	"github.com/lowplane/sevro/pkg/parser"
 	"github.com/lowplane/sevro/pkg/rules"
 )
 

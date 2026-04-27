@@ -47,8 +47,8 @@ func TestCompute_BandThresholds(t *testing.T) {
 		band     rules.Confidence
 	}{
 		{nil, 100, 100, rules.ConfidenceHigh},
-		{[]rules.Finding{{Severity: rules.SeverityLow}}, 95, 100, rules.ConfidenceHigh},  // 100 - 3 = 97
-		{[]rules.Finding{{Severity: rules.SeverityMed}, {Severity: rules.SeverityMed}}, 75, 85, rules.ConfidenceMed}, // 100 - 20 = 80
+		{[]rules.Finding{{Severity: rules.SeverityLow}}, 95, 100, rules.ConfidenceHigh},                                // 100 - 3 = 97
+		{[]rules.Finding{{Severity: rules.SeverityMed}, {Severity: rules.SeverityMed}}, 75, 85, rules.ConfidenceMed},   // 100 - 20 = 80
 		{[]rules.Finding{{Severity: rules.SeverityHigh}, {Severity: rules.SeverityHigh}}, 45, 60, rules.ConfidenceLow}, // 100 - 50 = 50
 	}
 	for i, tc := range cases {

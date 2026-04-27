@@ -10,12 +10,12 @@ import "github.com/lowplane/sevro/pkg/rules"
 // numerical Confidence Scores arrive in Year 2 once we have enough
 // merged-PR outcomes to calibrate. For now Confidence is qualitative.
 type Score struct {
-	Workloads     int               `json:"workloads_analyzed"`
-	Source        string            `json:"source"`
-	Value         int               `json:"score"`         // 0-100
-	Band          rules.Confidence  `json:"confidence_band"`
-	Penalties     map[string]int    `json:"penalties"`     // detector_id -> penalty points
-	Findings      []rules.Finding   `json:"findings"`
+	Workloads int              `json:"workloads_analyzed"`
+	Source    string           `json:"source"`
+	Value     int              `json:"score"` // 0-100
+	Band      rules.Confidence `json:"confidence_band"`
+	Penalties map[string]int   `json:"penalties"` // detector_id -> penalty points
+	Findings  []rules.Finding  `json:"findings"`
 }
 
 // Penalty weights per severity. High-severity findings drag the score

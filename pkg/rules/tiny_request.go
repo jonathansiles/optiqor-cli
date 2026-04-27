@@ -13,7 +13,7 @@ import (
 // shipping with effectively-zero scheduling weight.
 
 const (
-	tinyCPUMillicores = 10              // 10m
+	tinyCPUMillicores = 10               // 10m
 	tinyMemoryBytes   = 32 * 1024 * 1024 // 32 MiB
 )
 

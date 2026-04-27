@@ -6,9 +6,9 @@ import (
 	"io"
 	"strings"
 
-	"github.com/lowplane/sevro/pkg/parser"
 	"github.com/lowplane/sevro/internal/render"
 	"github.com/lowplane/sevro/internal/render/style"
+	"github.com/lowplane/sevro/pkg/parser"
 )
 
 // WriteText renders the diff as styled text. Always includes the

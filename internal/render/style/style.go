@@ -39,16 +39,16 @@ type Theme struct {
 	ConfLow  lipgloss.Style
 
 	// Output elements
-	Workload    lipgloss.Style
-	Title       lipgloss.Style
-	Detail      lipgloss.Style
-	Savings     lipgloss.Style
-	NoSavings   lipgloss.Style
-	Muted       lipgloss.Style
-	Divider     lipgloss.Style
-	Disclosure  lipgloss.Style
-	CallToLink  lipgloss.Style
-	OK          lipgloss.Style
+	Workload   lipgloss.Style
+	Title      lipgloss.Style
+	Detail     lipgloss.Style
+	Savings    lipgloss.Style
+	NoSavings  lipgloss.Style
+	Muted      lipgloss.Style
+	Divider    lipgloss.Style
+	Disclosure lipgloss.Style
+	CallToLink lipgloss.Style
+	OK         lipgloss.Style
 }
 
 // NewTheme builds a theme. If useColor is false, every style falls back

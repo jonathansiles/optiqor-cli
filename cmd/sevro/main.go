@@ -19,16 +19,16 @@ import (
 	"github.com/lowplane/sevro/internal/config"
 	"github.com/lowplane/sevro/internal/render"
 	"github.com/lowplane/sevro/internal/render/style"
-	"github.com/lowplane/sevro/pkg/rules"
 	"github.com/lowplane/sevro/internal/share"
+	"github.com/lowplane/sevro/pkg/rules"
 )
 
 // Exit codes — stable contract for CI integration.
 const (
-	exitSuccess     = 0 // no findings ≥ threshold
-	exitFindings    = 1 // findings ≥ threshold reported
-	exitInvocation  = 2 // invocation / parse error
-	exitInternal    = 3 // unexpected runtime error
+	exitSuccess    = 0 // no findings ≥ threshold
+	exitFindings   = 1 // findings ≥ threshold reported
+	exitInvocation = 2 // invocation / parse error
+	exitInternal   = 3 // unexpected runtime error
 )
 
 // errFindings is a sentinel returned from RunE so main can map it to exitFindings.

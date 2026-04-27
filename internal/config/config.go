@@ -7,10 +7,10 @@
 //
 // Lookup order (first match wins):
 //
-//   1. --config <path>
-//   2. SEVRO_CONFIG env var
-//   3. ./.sevro.yaml in the current working directory
-//   4. zero value (no config)
+//  1. --config <path>
+//  2. SEVRO_CONFIG env var
+//  3. ./.sevro.yaml in the current working directory
+//  4. zero value (no config)
 package config
 
 import (

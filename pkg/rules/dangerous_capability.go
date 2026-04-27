@@ -24,17 +24,17 @@ func (dangerousCapabilityAdded) Name() string { return "Dangerous Linux capabili
 // monitoring agents — and those should run as DaemonSets the platform
 // team explicitly trusts.
 var dangerousCaps = map[string]string{
-	"SYS_ADMIN":     "near-root: lets the container mount filesystems, change kernel parameters, etc.",
-	"NET_ADMIN":     "configure network interfaces, manipulate routing tables, intercept traffic",
-	"NET_RAW":       "craft raw packets — useful for ARP spoofing and other L2 attacks",
-	"SYS_PTRACE":    "attach to other processes' memory; can read secrets out of co-tenant pods",
-	"SYS_MODULE":    "load kernel modules; effectively root on the node",
+	"SYS_ADMIN":       "near-root: lets the container mount filesystems, change kernel parameters, etc.",
+	"NET_ADMIN":       "configure network interfaces, manipulate routing tables, intercept traffic",
+	"NET_RAW":         "craft raw packets — useful for ARP spoofing and other L2 attacks",
+	"SYS_PTRACE":      "attach to other processes' memory; can read secrets out of co-tenant pods",
+	"SYS_MODULE":      "load kernel modules; effectively root on the node",
 	"DAC_READ_SEARCH": "bypass DAC permission checks on file reads",
-	"DAC_OVERRIDE":  "bypass DAC permission checks on file writes",
-	"SYS_BOOT":      "reboot the node",
-	"SYS_TIME":      "change system time; breaks timing-based security guarantees",
-	"BPF":           "load BPF programs; can read kernel memory",
-	"PERFMON":       "perf_events syscall; can leak kernel address layouts",
+	"DAC_OVERRIDE":    "bypass DAC permission checks on file writes",
+	"SYS_BOOT":        "reboot the node",
+	"SYS_TIME":        "change system time; breaks timing-based security guarantees",
+	"BPF":             "load BPF programs; can read kernel memory",
+	"PERFMON":         "perf_events syscall; can leak kernel address layouts",
 }
 
 func (dangerousCapabilityAdded) Run(w parser.Workload) []Finding {

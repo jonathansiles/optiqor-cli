@@ -110,8 +110,8 @@ func All() []Detector {
 		newTinyCPURequest(),
 		newTinyMemoryRequest(),
 		// ---- Security (15) ----
-		newMissingCPULimit(),       // also surfaces in audit
-		newMissingMemoryLimit(),    // also surfaces in audit
+		newMissingCPULimit(),    // also surfaces in audit
+		newMissingMemoryLimit(), // also surfaces in audit
 		newImagePinnedLatest(),
 		newRunAsRoot(),
 		newRunsAsUIDZero(),

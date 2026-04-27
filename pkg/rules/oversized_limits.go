@@ -16,7 +16,7 @@ import (
 // because the scheduling effect kicks in regardless of utilisation.
 
 const (
-	oversizedCPULimitMillicores = 4000              // 4 vCPU
+	oversizedCPULimitMillicores = 4000                    // 4 vCPU
 	oversizedMemoryLimitBytes   = 16 * 1024 * 1024 * 1024 // 16 GiB
 )
 

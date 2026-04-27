@@ -173,11 +173,11 @@ func TestUpload_NetworkErrorGraceful(t *testing.T) {
 
 func TestIsHash(t *testing.T) {
 	cases := map[string]bool{
-		"":             false,
-		"abc":          false,
-		"abcdef012345": true,
-		"ABCDEF012345": true,
-		"abcdef01234g": false,
+		"":              false,
+		"abc":           false,
+		"abcdef012345":  true,
+		"ABCDEF012345":  true,
+		"abcdef01234g":  false,
 		"abcdef0123456": false, // too long
 	}
 	for in, want := range cases {

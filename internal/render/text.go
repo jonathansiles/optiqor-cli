@@ -27,7 +27,7 @@ const (
 
 // Report is the renderer-facing view of an analysis run.
 type Report struct {
-	Source    string          `json:"source"`             // path or label of the input
+	Source    string          `json:"source"` // path or label of the input
 	Workloads int             `json:"workloads_analyzed"`
 	Findings  []rules.Finding `json:"findings"`
 }

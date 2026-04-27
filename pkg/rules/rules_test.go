@@ -8,8 +8,8 @@ import (
 )
 
 // q is a helper to make tests terse.
-func cpuQ(v int64) parser.Quantity    { return parser.Quantity{Value: v, Set: true, Original: "x"} }
-func memQ(v int64) parser.Quantity    { return parser.Quantity{Value: v, Set: true, Original: "x"} }
+func cpuQ(v int64) parser.Quantity { return parser.Quantity{Value: v, Set: true, Original: "x"} }
+func memQ(v int64) parser.Quantity { return parser.Quantity{Value: v, Set: true, Original: "x"} }
 
 func TestCPUOverprovisioned_Triggers(t *testing.T) {
 	w := parser.Workload{

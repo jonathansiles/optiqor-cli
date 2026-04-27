@@ -15,11 +15,11 @@ import (
 // Sets are computed by name; a workload present only in B is "added"
 // (NewWorkload=true), only in A is "removed" (RemovedWorkload=true).
 type DiffEntry struct {
-	Name             string
-	NewWorkload      bool
-	RemovedWorkload  bool
-	CPURequestDelta  int64 // millicores; B - A
-	CPULimitDelta    int64
+	Name               string
+	NewWorkload        bool
+	RemovedWorkload    bool
+	CPURequestDelta    int64 // millicores; B - A
+	CPULimitDelta      int64
 	MemoryRequestDelta int64 // bytes; B - A
 	MemoryLimitDelta   int64
 	// MonthlyUSDCentsDelta is a sandbox-grade dollar estimate based on
