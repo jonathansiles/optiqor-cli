@@ -93,7 +93,7 @@ func TestAnalyze_FixtureFile(t *testing.T) {
 	// the renderer prints them as bare identifiers rather than as
 	// "workload: <name>".
 	for _, want := range []string{
-		"10 workloads",
+		"15 workloads",
 		"HIGH",
 		"MED",
 		"LOW",
@@ -125,7 +125,7 @@ func TestAnalyze_JSONShape(t *testing.T) {
 	out := buf.String()
 	for _, want := range []string{
 		`"accuracy_disclosure"`,
-		`"workloads_analyzed": 10`,
+		`"workloads_analyzed": 15`,
 		`"DetectorID": "cpu-overprovisioned"`,
 		`"DetectorID": "memory-overprovisioned"`,
 		`"DetectorID": "missing-memory-limit"`,

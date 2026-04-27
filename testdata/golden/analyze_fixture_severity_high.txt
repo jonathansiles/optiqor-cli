@@ -3,7 +3,7 @@
 ────────────────────────────────────────────────────────────────────────────────
 
   source: /home/shivam/Desktop/Merge/sevro/testdata/fixtures/basic-chart/values.yaml
-  10 workloads · 6 findings
+  15 workloads · 12 findings
 
    HIGH   admin-tool
     allowPrivilegeEscalation explicitly enabled
@@ -26,6 +26,54 @@
     securityContext.runAsNonRoot is set to false. Running as UID 0 expands the
     blast radius of any container escape. Set runAsNonRoot=true and runAsUser
     to a non-zero UID.
+    confidence: ●●● high
+
+   HIGH   memhog
+    Pod shares the host IPC namespace
+    hostIPC=true puts the pod in the node's IPC namespace, so it can read and
+    write SysV shared memory and POSIX message queues used by other pods on
+    the same node. Almost never required; turn it off unless the workload's
+    documented dependency demands it.
+    confidence: ●●● high
+
+   HIGH   memhog
+    Memory limit not set
+    This workload declares a memory request but no limit. Without a limit it
+    can consume node memory unbounded and evict neighbours under pressure. Set
+    a limit at or above your observed P95.
+    confidence: ●●● high
+
+   HIGH   ptrace-hunter
+    Dangerous Linux capability added
+    securityContext.capabilities.add includes 1 escalation-class
+    capability(s): SYS_PTRACE (attach to other processes' memory; can read
+    secrets out of co-tenant pods). Each grants abilities far beyond what an
+    application workload should need. Drop them and reach for a sidecar /
+    DaemonSet that runs in a more privileged ServiceAccount if the underlying
+    need is legitimate.
+    confidence: ●●● high
+
+   HIGH   ptrace-hunter
+    Pod shares the host PID namespace
+    hostPID=true gives the pod's processes visibility into every other process
+    on the node — including kubelet, the container runtime, and every
+    co-tenant pod. Required for a tiny set of node-level agents (debuggers,
+    profilers); never appropriate for application workloads.
+    confidence: ●●● high
+
+   HIGH   ptrace-hunter
+    Container runs as root
+    securityContext.runAsNonRoot is set to false. Running as UID 0 expands the
+    blast radius of any container escape. Set runAsNonRoot=true and runAsUser
+    to a non-zero UID.
+    confidence: ●●● high
+
+   HIGH   ptrace-hunter
+    runAsUser explicitly set to 0
+    securityContext.runAsUser is set to 0. This forces the container to run as
+    UID 0 (root) regardless of the image's USER directive — a hard override
+    that's almost always wrong for application workloads. Set runAsUser to a
+    non-zero UID (1000+) and runAsNonRoot=true.
     confidence: ●●● high
 
    HIGH   sniffer

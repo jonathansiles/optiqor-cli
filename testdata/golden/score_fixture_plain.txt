@@ -3,25 +3,40 @@
 ────────────────────────────────────────────────────────────────────────────────
 
   source: /home/shivam/Desktop/Merge/sevro/testdata/fixtures/basic-chart/values.yaml
-  workloads analyzed: 10
+  workloads analyzed: 15
 
   score:  0 / 100    ●○○ low
 
   Penalty breakdown
-    allow-privilege-escalation         -75
-    cpu-limit-far-above-request        -50
-    cpu-overprovisioned                -10
+    allow-privilege-escalation         -85
+    capabilities-not-dropped-all       -100
+    cpu-limit-far-above-request        -60
+    cpu-overprovisioned                -30
+    cpu-request-equals-limit           -6
+    cpu-without-memory-request         -3
+    dangerous-capability-added         -25
+    excessive-replica-count            -10
+    host-ipc                           -25
     host-network                       -25
     host-path-volume                   -25
+    host-pid                           -25
     image-pinned-latest                -20
     memory-limit-far-above-request     -10
-    memory-overprovisioned             -10
+    memory-overprovisioned             -20
+    memory-request-equals-limit        -3
+    memory-without-cpu-request         -3
     missing-cpu-limit                  -3
-    missing-memory-limit               -25
+    missing-memory-limit               -50
+    oversized-cpu-limit                -10
+    oversized-memory-limit             -10
     privileged-container               -25
-    read-only-root-fs-missing          -18
-    replicas-too-high                  -10
-    run-as-root                        -35
+    read-only-root-fs-missing          -21
+    replicas-too-high                  -20
+    run-as-root                        -60
+    runs-as-uid-zero                   -25
+    service-account-token-automount     -100
+    tiny-cpu-request                   -3
+    tiny-memory-request                -3
     unbounded-image-tag                -10
 
 ────────────────────────────────────────────────────────────────────────────────

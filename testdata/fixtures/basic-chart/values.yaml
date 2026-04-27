@@ -1,14 +1,21 @@
-# Demo chart — exercises every Year-1 detector.
-# - api         cpu-overprovisioned + memory-overprovisioned
-# - worker      missing-memory-limit + missing-cpu-limit
-# - cache       image-pinned-latest (Tag: latest)
-# - logger      image-pinned-latest (no tag)
-# - shipper     replicas-too-high (10 replicas, no HPA)
-# - admin-tool  privileged-container + run-as-root (explicit) + allow-privilege-escalation
-# - sniffer     host-network + host-path-volume
-# - bursty      cpu-limit-far-above-request + memory-limit-far-above-request
-# - dev-build   unbounded-image-tag (tag: main) + read-only-root-fs-missing
-# - clean       fully right-sized + secure; produces no findings
+# Demo chart — exercises every one of the 30 Phase-3 detectors.
+# Cost workloads:
+#   - api            cpu-overprovisioned + memory-overprovisioned
+#   - worker         missing-memory-limit + missing-cpu-limit (also security)
+#   - cache          image-pinned-latest (Tag: latest)
+#   - logger         image-pinned-latest (no tag)
+#   - shipper        replicas-too-high (10 replicas, no HPA)
+#   - bursty         cpu-limit-far-above-request + memory-limit-far-above-request
+#   - dev-build      unbounded-image-tag (tag: main) + read-only-root-fs-missing
+#   - megabox        oversized-cpu-limit + oversized-memory-limit + excessive-replica-count
+#   - incomplete     cpu-without-memory-request + tiny-cpu-request
+#   - guaranteed     cpu/memory-request-equals-limit + service-account-token-automount
+# Security workloads:
+#   - admin-tool     privileged-container + run-as-root (explicit) + allow-privilege-escalation
+#   - sniffer        host-network + host-path-volume
+#   - ptrace-hunter  dangerous-capability-added (SYS_PTRACE) + capabilities-not-dropped-all
+#                    + runs-as-uid-zero + host-pid
+# - clean            fully right-sized + secure; produces no findings.
 
 api:
   image:
@@ -151,11 +158,34 @@ dev-build:
     runAsNonRoot: true
     allowPrivilegeEscalation: false
 
-clean:
+megabox:
+  # Triggers oversized-cpu-limit + oversized-memory-limit + excessive-replica-count
   image:
-    repository: example/clean
-    tag: "v3.2.1"
+    repository: example/data-cruncher
+    tag: "v4.0.0"
+  replicas: 25
+  resources:
+    requests:
+      cpu: "2"
+      memory: "8Gi"
+    limits:
+      cpu: "8"
+      memory: "32Gi"
+  securityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+  automountServiceAccountToken: false
+
+ptrace-hunter:
+  # Triggers dangerous-capability-added (SYS_PTRACE) + capabilities-not-dropped-all + runs-as-uid-zero + host-pid
+  image:
+    repository: example/profiler
+    tag: "v0.7.2"
   replicas: 1
+  hostPID: true
   resources:
     requests:
       cpu: "100m"
@@ -164,6 +194,85 @@ clean:
       cpu: "500m"
       memory: "512Mi"
   securityContext:
+    runAsUser: 0
+    runAsNonRoot: false
+    capabilities:
+      add: [SYS_PTRACE]
+  automountServiceAccountToken: false
+
+incomplete:
+  # Triggers cpu-without-memory-request + tiny-cpu-request
+  image:
+    repository: example/incomplete
+    tag: "v1.0.0"
+  replicas: 1
+  resources:
+    requests:
+      cpu: "5m"
+    limits:
+      cpu: "5m"
+  securityContext:
     runAsNonRoot: true
     readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+  automountServiceAccountToken: false
+
+memhog:
+  # Triggers memory-without-cpu-request + tiny-memory-request + host-ipc
+  image:
+    repository: example/memhog
+    tag: "v0.2.0"
+  replicas: 1
+  hostIPC: true
+  resources:
+    requests:
+      memory: "16Mi"
+  securityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+  automountServiceAccountToken: false
+
+guaranteed:
+  # Triggers cpu-request-equals-limit + memory-request-equals-limit + service-account-token-automount (default)
+  image:
+    repository: example/guaranteed
+    tag: "v2.1.0"
+  replicas: 1
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  securityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+
+clean:
+  image:
+    repository: example/clean
+    tag: "v3.2.1"
+  replicas: 2
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
