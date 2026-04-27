@@ -27,6 +27,9 @@ var SecurityDetectorIDs = map[string]bool{
 	"missing-memory-limit": true,
 	"missing-cpu-limit":    true,
 	"image-pinned-latest":  true,
+	"run-as-root":          true,
+	"privileged-container": true,
+	"host-network":         true,
 }
 
 // Filter applies the options to a Report's findings and returns a

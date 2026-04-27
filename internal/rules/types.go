@@ -98,6 +98,10 @@ func All() []Detector {
 		newMissingMemoryLimit(),
 		newMissingCPULimit(),
 		newImagePinnedLatest(),
+		newReplicasTooHigh(),
+		newRunAsRoot(),
+		newPrivilegedContainer(),
+		newHostNetwork(),
 	}
 }
 

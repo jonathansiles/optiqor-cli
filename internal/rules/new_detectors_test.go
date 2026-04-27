@@ -100,12 +100,14 @@ func TestImagePinnedLatest_NoImage(t *testing.T) {
 	}
 }
 
-// Sanity check that All() now returns 5 detectors and they all have
-// distinct stable IDs.
-func TestAll_FiveDetectorsUniqueIDs(t *testing.T) {
+// Sanity check that All() returns the expected detector count and
+// that every ID is unique. Update the count when new detectors are
+// added; the IDs themselves are stable wire format.
+func TestAll_DetectorCountAndUniqueIDs(t *testing.T) {
+	const want = 9 // 5 cost/safety + 4 security
 	dets := All()
-	if len(dets) != 5 {
-		t.Fatalf("All() returned %d detectors, want 5", len(dets))
+	if len(dets) != want {
+		t.Fatalf("All() returned %d detectors, want %d", len(dets), want)
 	}
 	seen := map[string]bool{}
 	for _, d := range dets {
