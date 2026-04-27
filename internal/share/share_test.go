@@ -1,6 +1,9 @@
 package share
 
 import (
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
@@ -87,6 +90,84 @@ func TestSanitise_TruncatesLongDetail(t *testing.T) {
 	}
 	if !strings.HasSuffix(d, "…") {
 		t.Errorf("truncation marker missing: %q", d)
+	}
+}
+
+func TestUpload_PostsSanitisedJSON(t *testing.T) {
+	var (
+		gotMethod  string
+		gotHash    string
+		gotContent string
+		gotBody    []byte
+	)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotMethod = r.Method
+		gotHash = r.Header.Get("X-Sevro-Hash")
+		gotContent = r.Header.Get("Content-Type")
+		gotBody, _ = io.ReadAll(r.Body)
+		w.WriteHeader(http.StatusAccepted)
+	}))
+	defer srv.Close()
+
+	rep := sample{Source: "/tmp/x", Workloads: 2}
+	res := Upload(rep, srv.URL)
+
+	if !res.Posted {
+		t.Fatalf("Posted = false, error = %q", res.Error)
+	}
+	if !IsHash(res.Hash) {
+		t.Errorf("Hash invalid: %q", res.Hash)
+	}
+	if !strings.HasPrefix(res.URL, BaseURL) {
+		t.Errorf("URL = %q", res.URL)
+	}
+	if gotMethod != http.MethodPost {
+		t.Errorf("method = %q", gotMethod)
+	}
+	if gotContent != "application/json" {
+		t.Errorf("content-type = %q", gotContent)
+	}
+	if gotHash != res.Hash {
+		t.Errorf("X-Sevro-Hash = %q, want %q", gotHash, res.Hash)
+	}
+	// Body must NOT contain the source path (PII sanitisation).
+	if strings.Contains(string(gotBody), "/tmp/x") {
+		t.Errorf("source path leaked into upload body: %s", gotBody)
+	}
+}
+
+func TestUpload_RejectsNon2xxAsError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer srv.Close()
+
+	res := Upload(sample{Workloads: 1}, srv.URL)
+	if res.Posted {
+		t.Fatal("non-2xx must be reported as not-posted")
+	}
+	if !strings.Contains(res.Error, "500") {
+		t.Errorf("Error = %q, want it to mention status 500", res.Error)
+	}
+	if !IsHash(res.Hash) || res.URL == "" {
+		t.Errorf("hash/url should still be populated on failure: %+v", res)
+	}
+}
+
+func TestUpload_NetworkErrorGraceful(t *testing.T) {
+	// Closed server → connection-refused style error
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv.Close()
+
+	res := Upload(sample{Workloads: 1}, srv.URL)
+	if res.Posted {
+		t.Fatal("upload to closed server should not be Posted")
+	}
+	if res.Error == "" {
+		t.Error("Error should describe the failure")
+	}
+	if !IsHash(res.Hash) {
+		t.Errorf("Hash should be populated even on network failure: %q", res.Hash)
 	}
 }
 

@@ -16,11 +16,15 @@
 package share
 
 import (
+	"bytes"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
+	"time"
 )
 
 // BaseURL is the public share host. Hashes resolve to a read-only HTML
@@ -112,6 +116,74 @@ func canonicalJSON(v any) ([]byte, error) {
 		return nil, err
 	}
 	return json.Marshal(doc)
+}
+
+// UploadEndpoint is the public sandbox endpoint that accepts a
+// sanitised analysis blob. Phase 2 ships the receiver behind this
+// URL; until then the CLI gracefully falls back to printing the
+// hash + URL stub when the endpoint is unreachable. Override via
+// SEVRO_SHARE_URL for self-hosted Sevro deployments.
+const UploadEndpoint = "https://sandbox.sevro.dev/api/v1/share"
+
+// uploadTimeout caps how long we wait before giving up and printing
+// the local hash. Keep tight — the CLI is interactive.
+const uploadTimeout = 5 * time.Second
+
+// UploadResult is what Upload returns. The hash + URL fields are
+// always populated; Posted reports whether the upload itself succeeded.
+type UploadResult struct {
+	Hash   string
+	URL    string
+	Posted bool   // true when the HTTP POST returned 2xx
+	Error  string // non-empty when Posted=false
+}
+
+// Upload attempts to POST the sanitised report JSON to endpoint and
+// returns the resulting (hash, URL, posted) tuple.
+//
+// CLI hard rule: this is the only outbound network call sevro makes,
+// and only when the user explicitly passes --share. The function never
+// retries; never logs request bodies; never sends anything but the
+// sanitised payload.
+func Upload(report any, endpoint string) UploadResult {
+	hash, err := Hash(report)
+	if err != nil {
+		return UploadResult{Error: err.Error()}
+	}
+	url := BaseURL + hash
+	if endpoint == "" {
+		endpoint = UploadEndpoint
+	}
+
+	sanitised, err := Sanitise(report)
+	if err != nil {
+		return UploadResult{Hash: hash, URL: url, Error: err.Error()}
+	}
+	body, err := canonicalJSON(sanitised)
+	if err != nil {
+		return UploadResult{Hash: hash, URL: url, Error: err.Error()}
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), uploadTimeout)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
+	if err != nil {
+		return UploadResult{Hash: hash, URL: url, Error: err.Error()}
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Sevro-Hash", hash)
+	req.Header.Set("User-Agent", "sevro-cli")
+
+	client := &http.Client{Timeout: uploadTimeout}
+	resp, err := client.Do(req)
+	if err != nil {
+		return UploadResult{Hash: hash, URL: url, Error: err.Error()}
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return UploadResult{Hash: hash, URL: url, Error: fmt.Sprintf("upload rejected: HTTP %d", resp.StatusCode)}
+	}
+	return UploadResult{Hash: hash, URL: url, Posted: true}
 }
 
 // IsHash reports whether s looks like a hash this package would emit.
