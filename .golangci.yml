@@ -1,29 +1,40 @@
+version: "2"
+
 run:
   timeout: 5m
   tests: true
 
 linters:
-  disable-all: true
+  default: none
   enable:
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - unused
     - bodyclose
     - copyloopvar
+    - errcheck
     - errorlint
     - gocritic
     - gosec
+    - govet
+    - ineffassign
     - misspell
     - prealloc
     - revive
+    - staticcheck
     - unconvert
+    - unused
+  settings:
+    gocritic:
+      enabled-tags: [diagnostic, performance, style]
+      disabled-checks:
+        # The Detector interface is intentionally value-typed: detectors are
+        # pure functions over an immutable Workload snapshot. Switching to
+        # pointer would weaken the contract. parser.Workload is ~344 B.
+        - hugeParam
+        - rangeValCopy
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters: [gosec, errcheck]
 
 issues:
-  exclude-rules:
-    - path: _test\.go
-      linters: [gosec, errcheck]
   max-issues-per-linter: 0
   max-same-issues: 0
