@@ -93,15 +93,24 @@ func Run(workloads []parser.Workload, dets []Detector) []Finding {
 // detectors in one place.
 func All() []Detector {
 	return []Detector{
+		// Cost / efficiency
 		newCPUOverprovisioned(),
 		newMemoryOverprovisioned(),
+		newCPULimitFarAboveRequest(),
+		newMemoryLimitFarAboveRequest(),
+		newReplicasTooHigh(),
+		newUnboundedImageTag(),
+		// Safety (cost-adjacent)
 		newMissingMemoryLimit(),
 		newMissingCPULimit(),
+		// Security
 		newImagePinnedLatest(),
-		newReplicasTooHigh(),
 		newRunAsRoot(),
 		newPrivilegedContainer(),
 		newHostNetwork(),
+		newReadOnlyRootFSMissing(),
+		newAllowPrivilegeEscalation(),
+		newHostPathVolume(),
 	}
 }
 

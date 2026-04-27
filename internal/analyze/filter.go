@@ -24,12 +24,15 @@ type FilterOptions struct {
 // "security-class". New security detectors must be added here so the
 // audit command picks them up.
 var SecurityDetectorIDs = map[string]bool{
-	"missing-memory-limit": true,
-	"missing-cpu-limit":    true,
-	"image-pinned-latest":  true,
-	"run-as-root":          true,
-	"privileged-container": true,
-	"host-network":         true,
+	"missing-memory-limit":         true,
+	"missing-cpu-limit":            true,
+	"image-pinned-latest":          true,
+	"run-as-root":                  true,
+	"privileged-container":         true,
+	"host-network":                 true,
+	"read-only-root-fs-missing":    true,
+	"allow-privilege-escalation":   true,
+	"host-path-volume":             true,
 }
 
 // Filter applies the options to a Report's findings and returns a
