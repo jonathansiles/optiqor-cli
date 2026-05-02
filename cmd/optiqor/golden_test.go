@@ -77,10 +77,18 @@ func TestGolden(t *testing.T) {
 
 // normalize replaces filesystem-dependent paths with stable placeholders
 // so the golden file is portable across machines and CI runners.
+//
+// The analyze command resolves chart paths via filepath.Abs, which
+// embeds the runner's home/workspace prefix in the report's "Source"
+// field. We strip both the test's cwd and the repo root (one level
+// up) so the golden output stays bit-identical between a developer's
+// laptop and the GitHub Actions ubuntu-latest / macos-latest runners.
 func normalize(s string) string {
-	cwd, err := os.Getwd()
-	if err == nil {
+	if cwd, err := os.Getwd(); err == nil {
 		s = strings.ReplaceAll(s, cwd, "<CWD>")
+		if repo, err := filepath.Abs(filepath.Join(cwd, "..", "..")); err == nil {
+			s = strings.ReplaceAll(s, repo, "<REPO>")
+		}
 	}
 	return s
 }
