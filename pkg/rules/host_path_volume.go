@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // hostPathVolume fires when a workload mounts any volume from the
 // node's filesystem. Most application charts do not need this; when

@@ -1,15 +1,15 @@
 {
-  "name": "@sevro/cli",
+  "name": "@optiqor/cli",
   "version": "0.0.0",
-  "description": "Sevro CLI — Detect. Fix. Prove. Cost and security analysis for Kubernetes Helm charts. No login. No agent. No cluster connection required.",
+  "description": "Optiqor CLI — Detect. Fix. Prove. Cost analysis for Kubernetes Helm charts (security misconfigurations flagged as a bonus). No login. No agent. No cluster connection required.",
   "license": "Apache-2.0",
-  "homepage": "https://sevro.dev",
+  "homepage": "https://optiqor.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lowplane/sevro.git"
+    "url": "https://github.com/optiqor/optiqor-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/lowplane/sevro/issues"
+    "url": "https://github.com/optiqor/optiqor-cli/issues"
   },
   "keywords": [
     "kubernetes",
@@ -19,10 +19,10 @@
     "finops",
     "security",
     "cli",
-    "sevro"
+    "optiqor"
   ],
   "bin": {
-    "sevro": "npm/index.js"
+    "optiqor": "npm/index.js"
   },
   "scripts": {
     "postinstall": "node ./npm/postinstall.js",

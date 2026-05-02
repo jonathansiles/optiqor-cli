@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // allowPrivilegeEscalation fires when allowPrivilegeEscalation is true
 // (or unset, which defaults to true). The flag is the kernel's

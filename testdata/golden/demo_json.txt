@@ -1,5 +1,5 @@
 {
-  "accuracy_disclosure": "Sandbox accuracy: ±40%. Install the Sevro agent for exact numbers (sevro.dev/get).",
+  "accuracy_disclosure": "Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get).",
   "source": "demo",
   "workloads_analyzed": 15,
   "findings": [

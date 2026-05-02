@@ -6,9 +6,9 @@ import (
 	"io"
 	"strings"
 
-	"github.com/lowplane/sevro/internal/render"
-	"github.com/lowplane/sevro/internal/render/style"
-	"github.com/lowplane/sevro/pkg/parser"
+	"github.com/optiqor/optiqor-cli/internal/render"
+	"github.com/optiqor/optiqor-cli/internal/render/style"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
 )
 
 // WriteText renders the diff as styled text. Always includes the
@@ -22,7 +22,7 @@ func (r DiffReport) WriteText(w io.Writer, opts render.Options) error {
 
 	var b strings.Builder
 	fmt.Fprintf(&b, "%s\n", t.DividerLine(width))
-	fmt.Fprintf(&b, "  %s   %s\n", t.Brand.Render("sevro diff"), t.Tagline.Render("compare two Helm values files"))
+	fmt.Fprintf(&b, "  %s   %s\n", t.Brand.Render("optiqor diff"), t.Tagline.Render("compare two Helm values files"))
 	fmt.Fprintf(&b, "%s\n\n", t.DividerLine(width))
 	fmt.Fprintf(&b, "  %s %s\n", t.Muted.Render("a:"), t.Workload.Render(r.A))
 	fmt.Fprintf(&b, "  %s %s\n\n", t.Muted.Render("b:"), t.Workload.Render(r.B))

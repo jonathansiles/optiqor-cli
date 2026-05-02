@@ -1,14 +1,14 @@
-# Contributing to Sevro CLI
+# Contributing to Optiqor CLI
 
-Thanks for considering a contribution. The CLI is the open, auditable surface of Sevro — everything in here is Apache-2.0 and stays that way.
+Thanks for considering a contribution. The CLI is the open, auditable surface of Optiqor — everything in here is Apache-2.0 and stays that way.
 
 ## Quickstart
 
 ```sh
-git clone https://github.com/lowplane/sevro cli
+git clone https://github.com/optiqor/optiqor-cli cli
 cd cli
-make build              # produces ./bin/sevro
-./bin/sevro --version
+make build              # produces ./bin/optiqor
+./bin/optiqor --version
 make test
 ```
 

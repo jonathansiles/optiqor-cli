@@ -21,7 +21,7 @@ func TestRoot_Help(t *testing.T) {
 		"demo",
 		accuracyDisclosure,
 		"Examples:",
-		"sevro analyze",
+		"optiqor analyze",
 		"--no-color",
 	} {
 		if !strings.Contains(buf.String(), want) {
@@ -39,7 +39,7 @@ func TestVersion_Output(t *testing.T) {
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("execute --version: %v", err)
 	}
-	for _, want := range []string{"sevro", "Helm chart cost & security analysis"} {
+	for _, want := range []string{"optiqor", "Helm chart cost analysis"} {
 		if !strings.Contains(buf.String(), want) {
 			t.Errorf("version missing %q:\n%s", want, buf.String())
 		}
@@ -59,12 +59,12 @@ func TestDemo_RunsAndIncludesDisclosure(t *testing.T) {
 	}
 	out := buf.String()
 	for _, want := range []string{
-		"sevro",
+		"optiqor",
 		"Helm chart cost",
 		"api",
 		"worker",
 		"±40%",
-		"sevro.dev/get",
+		"optiqor.dev/get",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("missing %q in demo output:\n%s", want, out)

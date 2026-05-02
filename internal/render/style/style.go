@@ -1,4 +1,4 @@
-// Package style centralises the Sevro CLI's visual language: colors,
+// Package style centralises the Optiqor CLI's visual language: colors,
 // badges, dividers, and section formatters. Renderers compose these
 // styles; they never reach for raw ANSI codes.
 //

@@ -1,4 +1,4 @@
-// Package pkg is the stable public API surface of the Sevro CLI.
+// Package pkg is the stable public API surface of the Optiqor CLI.
 //
 // External programs may import types and functions exposed under pkg/ subject
 // to semver guarantees: breaking changes go through deprecation notices and

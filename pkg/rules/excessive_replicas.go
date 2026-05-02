@@ -3,7 +3,7 @@ package rules
 import (
 	"fmt"
 
-	"github.com/lowplane/sevro/pkg/parser"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
 )
 
 // excessiveReplicaCount fires when a workload declares more than 20

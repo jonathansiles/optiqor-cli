@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // serviceAccountTokenAutomount fires when the workload has not
 // explicitly disabled service-account-token auto-mount. By default

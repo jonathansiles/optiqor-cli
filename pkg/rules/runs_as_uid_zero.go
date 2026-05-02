@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // runsAsUIDZero fires when runAsUser is explicitly 0 (root). Distinct
 // from `run-as-root` (which fires on `runAsNonRoot=false`) — this one

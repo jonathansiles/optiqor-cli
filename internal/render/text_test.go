@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lowplane/sevro/pkg/rules"
+	"github.com/optiqor/optiqor-cli/pkg/rules"
 )
 
 // stripANSI removes basic ANSI/OSC sequences so assertions can check
@@ -152,14 +152,14 @@ func TestText_RendersFindings(t *testing.T) {
 	}
 	out := buf.String()
 	for _, want := range []string{
-		"sevro",
+		"optiqor",
 		"Helm chart cost & security analysis",
 		"HIGH",
 		"MED",
 		"Memory limit not set",
 		"CPU request appears overprovisioned",
 		"$123.45",
-		"sevro.dev/get",
+		"optiqor.dev/get",
 		"±40%",
 		"confidence:",
 		"high",

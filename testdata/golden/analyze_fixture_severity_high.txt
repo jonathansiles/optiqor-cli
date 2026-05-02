@@ -1,8 +1,8 @@
 ────────────────────────────────────────────────────────────────────────────────
-  sevro   Helm chart cost & security analysis
+  optiqor   Helm chart cost & security analysis
 ────────────────────────────────────────────────────────────────────────────────
 
-  source: /home/shivam/Desktop/Merge/sevro/testdata/fixtures/basic-chart/values.yaml
+  source: /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
   15 workloads · 12 findings
 
    HIGH   admin-tool
@@ -100,5 +100,5 @@
     confidence: ●●● high
 
 ────────────────────────────────────────────────────────────────────────────────
-  Sandbox accuracy: ±40%. Install the Sevro agent for exact numbers (sevro.dev/get).
-  → install the agent for exact numbers: sevro.dev/get (https://sevro.dev/get)
+  Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get).
+  → install the agent for exact numbers: optiqor.dev/get (https://optiqor.dev/get)

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/lowplane/sevro/pkg/parser"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
 )
 
 // DiffEntry is the per-workload change between two values files.
@@ -95,7 +95,7 @@ func Diff(a, b io.Reader, aLabel, bLabel string) (DiffReport, error) {
 	return DiffReport{A: aLabel, B: bLabel, Entries: entries}, nil
 }
 
-// DiffPaths is the convenience wrapper used by `sevro diff <a> <b>`.
+// DiffPaths is the convenience wrapper used by `optiqor diff <a> <b>`.
 func DiffPaths(a, b string) (DiffReport, error) {
 	fa, err := openValues(a)
 	if err != nil {

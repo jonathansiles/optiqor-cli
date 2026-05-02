@@ -1,11 +1,11 @@
 // Package share computes a content-addressable hash of an analysis
-// payload and produces a `sevro.dev/r/<hash>` URL.
+// payload and produces a `optiqor.dev/r/<hash>` URL.
 //
-// The CLI's `--share` flag is the only network egress sevro takes
+// The CLI's `--share` flag is the only network egress optiqor takes
 // in Phase 1. Even then, Phase 1 ships only the local hashing — the
 // actual upload endpoint lives behind the public sandbox (Phase 2).
 // Until that lands, the CLI prints the hash + URL so users get a
-// stable identifier they can manually copy into a sevro.dev/r/<hash>
+// stable identifier they can manually copy into a optiqor.dev/r/<hash>
 // page once the endpoint is live.
 //
 // Hard rules (from CLAUDE.md):
@@ -30,7 +30,7 @@ import (
 // BaseURL is the public share host. Hashes resolve to a read-only HTML
 // view of the analysis once Phase 2 ships the sandbox; until then the
 // URL is informational.
-const BaseURL = "https://sevro.dev/r/"
+const BaseURL = "https://optiqor.dev/r/"
 
 // HashLen controls how many hex characters of the SHA-256 digest the
 // CLI exposes in the URL. 12 chars (48 bits) is collision-safe at the
@@ -94,7 +94,7 @@ func Hash(report any) (string, error) {
 	return hex.EncodeToString(sum[:])[:HashLen], nil
 }
 
-// URL returns the full sevro.dev/r/<hash> URL for the report.
+// URL returns the full optiqor.dev/r/<hash> URL for the report.
 func URL(report any) (string, error) {
 	h, err := Hash(report)
 	if err != nil {
@@ -122,8 +122,8 @@ func canonicalJSON(v any) ([]byte, error) {
 // sanitised analysis blob. Phase 2 ships the receiver behind this
 // URL; until then the CLI gracefully falls back to printing the
 // hash + URL stub when the endpoint is unreachable. Override via
-// SEVRO_SHARE_URL for self-hosted Sevro deployments.
-const UploadEndpoint = "https://sandbox.sevro.dev/api/v1/share"
+// OPTIQOR_SHARE_URL for self-hosted Optiqor deployments.
+const UploadEndpoint = "https://sandbox.optiqor.dev/api/v1/share"
 
 // uploadTimeout caps how long we wait before giving up and printing
 // the local hash. Keep tight — the CLI is interactive.
@@ -141,7 +141,7 @@ type UploadResult struct {
 // Upload attempts to POST the sanitised report JSON to endpoint and
 // returns the resulting (hash, URL, posted) tuple.
 //
-// CLI hard rule: this is the only outbound network call sevro makes,
+// CLI hard rule: this is the only outbound network call optiqor makes,
 // and only when the user explicitly passes --share. The function never
 // retries; never logs request bodies; never sends anything but the
 // sanitised payload.
@@ -171,8 +171,8 @@ func Upload(report any, endpoint string) UploadResult {
 		return UploadResult{Hash: hash, URL: url, Error: err.Error()}
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Sevro-Hash", hash)
-	req.Header.Set("User-Agent", "sevro-cli")
+	req.Header.Set("X-Optiqor-Hash", hash)
+	req.Header.Set("User-Agent", "optiqor-cli")
 
 	client := &http.Client{Timeout: uploadTimeout}
 	resp, err := client.Do(req)
@@ -187,7 +187,7 @@ func Upload(report any, endpoint string) UploadResult {
 }
 
 // IsHash reports whether s looks like a hash this package would emit.
-// Useful for accepting `sevro <subcommand> --share-hash <id>` reads
+// Useful for accepting `optiqor <subcommand> --share-hash <id>` reads
 // in future phases.
 func IsHash(s string) bool {
 	if len(s) != HashLen {

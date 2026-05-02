@@ -3,7 +3,7 @@ package rules
 import (
 	"fmt"
 
-	"github.com/lowplane/sevro/pkg/parser"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
 )
 
 // memoryOverprovisioned mirrors cpuOverprovisioned for memory: when

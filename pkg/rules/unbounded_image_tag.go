@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // unboundedImageTag fires when an image is tagged with a known
 // floating tag — `main`, `master`, `stable`, `dev`, `staging`,

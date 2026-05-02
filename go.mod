@@ -1,4 +1,4 @@
-module github.com/lowplane/sevro
+module github.com/optiqor/optiqor-cli
 
 go 1.24
 

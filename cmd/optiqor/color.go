@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/lowplane/sevro/internal/config"
+	"github.com/optiqor/optiqor-cli/internal/config"
 )
 
 // colorPolicyKey is the context key under which the resolved
@@ -32,7 +32,7 @@ func colorPolicyFrom(ctx context.Context) bool {
 	return v
 }
 
-// configKey is the context key for the loaded .sevro.yaml.
+// configKey is the context key for the loaded .optiqor.yaml.
 type configKey struct{}
 
 // withConfig stashes the loaded Config in ctx.

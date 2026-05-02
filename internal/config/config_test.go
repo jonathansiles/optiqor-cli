@@ -23,7 +23,7 @@ func TestLoad_NoFileReturnsZero(t *testing.T) {
 	}
 }
 
-func TestLoad_PicksUpDotSevro(t *testing.T) {
+func TestLoad_PicksUpDotOptiqor(t *testing.T) {
 	dir := t.TempDir()
 	wd, _ := os.Getwd()
 	defer os.Chdir(wd)
@@ -78,7 +78,7 @@ func TestLoad_EnvVarFallback(t *testing.T) {
 	if err := os.WriteFile(path, []byte("min_severity: low"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("SEVRO_CONFIG", path)
+	t.Setenv("OPTIQOR_CONFIG", path)
 	c, err := Load("")
 	if err != nil {
 		t.Fatal(err)

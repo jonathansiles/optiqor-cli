@@ -1,8 +1,9 @@
-// Command sevro is the entrypoint for the open-source Sevro CLI.
+// Command optiqor is the entrypoint for the open-source Optiqor CLI.
 //
 // The CLI is a deterministic rule engine that analyzes Helm charts for cost
-// inefficiencies and security findings. It does NOT call any LLM and does NOT
-// phone home by default — see ../../CLAUDE.md for the hard rules.
+// inefficiencies. It also flags obvious security misconfigurations as a bonus
+// side-effect of parsing. It does NOT call any LLM and does NOT phone home by
+// default — see ../../CLAUDE.md for the hard rules.
 package main
 
 import (
@@ -15,12 +16,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/lowplane/sevro/internal/analyze"
-	"github.com/lowplane/sevro/internal/config"
-	"github.com/lowplane/sevro/internal/render"
-	"github.com/lowplane/sevro/internal/render/style"
-	"github.com/lowplane/sevro/internal/share"
-	"github.com/lowplane/sevro/pkg/rules"
+	"github.com/optiqor/optiqor-cli/internal/analyze"
+	"github.com/optiqor/optiqor-cli/internal/config"
+	"github.com/optiqor/optiqor-cli/internal/render"
+	"github.com/optiqor/optiqor-cli/internal/render/style"
+	"github.com/optiqor/optiqor-cli/internal/share"
+	"github.com/optiqor/optiqor-cli/pkg/rules"
 )
 
 // Exit codes — stable contract for CI integration.
@@ -32,11 +33,11 @@ const (
 )
 
 // errFindings is a sentinel returned from RunE so main can map it to exitFindings.
-var errFindings = errors.New("sevro: findings exceed threshold")
+var errFindings = errors.New("optiqor: findings exceed threshold")
 
 var version = "dev"
 
-const accuracyDisclosure = "Sandbox accuracy: ±40%. Install the Sevro agent for exact numbers (sevro.dev/get)."
+const accuracyDisclosure = "Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get)."
 
 func main() {
 	err := newRootCmd().Execute()
@@ -59,23 +60,27 @@ func newRootCmd() *cobra.Command {
 	)
 
 	root := &cobra.Command{
-		Use:   "sevro",
-		Short: "Cost & security analysis for Kubernetes Helm charts",
-		Long: `sevro analyzes Helm charts (or values files) for cost inefficiencies and
-security findings — entirely offline, no login, no agent.
+		Use:   "optiqor",
+		Short: "Cost analysis for Kubernetes Helm charts (security misconfigurations as a bonus)",
+		Long: `optiqor analyzes Helm charts (or values files) for cost inefficiencies —
+entirely offline, no login, no agent.
+
+As a bonus, it also flags obvious security misconfigurations it spots while
+parsing your chart (runAsRoot, :latest tags, missing securityContext, host
+namespaces, etc.). Cost is the headline; security is a side-effect.
 
 ` + accuracyDisclosure,
 		Example: `  # Analyze a Helm chart directory
-  sevro analyze ./my-chart
+  optiqor analyze ./my-chart
 
   # Analyze a single values file
-  sevro analyze ./values.yaml
+  optiqor analyze ./values.yaml
 
   # Demo with a bundled chart
-  sevro demo
+  optiqor demo
 
   # Pipe machine-readable JSON into jq
-  sevro analyze ./chart --json | jq .findings`,
+  optiqor analyze ./chart --json | jq .findings`,
 		Version:           version,
 		SilenceUsage:      true,
 		SilenceErrors:     true, // we render errors ourselves
@@ -83,7 +88,7 @@ security findings — entirely offline, no login, no agent.
 	}
 
 	root.PersistentFlags().BoolVar(&noColor, "no-color", false, "disable colored output (also: NO_COLOR env)")
-	root.PersistentFlags().StringVar(&configPath, "config", "", "path to .sevro.yaml (default: ./.sevro.yaml or $SEVRO_CONFIG)")
+	root.PersistentFlags().StringVar(&configPath, "config", "", "path to .optiqor.yaml (default: ./.optiqor.yaml or $OPTIQOR_CONFIG)")
 
 	// Stash the no-color decision and the loaded config in context so
 	// subcommands can read both.
@@ -118,7 +123,7 @@ security findings — entirely offline, no login, no agent.
 
 // versionTemplate prints a polished one-liner including the brand.
 func versionTemplate() string {
-	return fmt.Sprintf("sevro %s — %s\n", version, "Helm chart cost & security analysis")
+	return fmt.Sprintf("optiqor %s — %s\n", version, "Helm chart cost analysis (security bonus)")
 }
 
 func newAnalyzeCmd() *cobra.Command {
@@ -134,15 +139,16 @@ func newAnalyzeCmd() *cobra.Command {
 	)
 	cmd := &cobra.Command{
 		Use:   "analyze [chart]",
-		Short: "Analyze a Helm chart or values file for cost & security findings",
+		Short: "Analyze a Helm chart or values file for cost findings (security as a bonus)",
 		Long: `Reads a Helm chart directory or a single values file and reports cost
-inefficiencies and security findings.
+inefficiencies. Obvious security misconfigurations are flagged as a bonus
+side-effect of parsing — they are not the headline feature.
 
 ` + accuracyDisclosure,
-		Example: `  sevro analyze ./my-chart
-  sevro analyze ./values.yaml --json
-  sevro analyze ./chart --severity=med --fail-on=high
-  sevro analyze ./chart --detector cpu-overprovisioned --detector missing-memory-limit`,
+		Example: `  optiqor analyze ./my-chart
+  optiqor analyze ./values.yaml --json
+  optiqor analyze ./chart --severity=med --fail-on=high
+  optiqor analyze ./chart --detector cpu-overprovisioned --detector missing-memory-limit`,
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			path := "."
@@ -190,7 +196,7 @@ inefficiencies and security findings.
 	}
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "emit machine-readable JSON")
 	cmd.Flags().BoolVar(&offline, "offline", true, "do not perform any network calls (always true in Phase 1)")
-	cmd.Flags().BoolVar(&shareFlag, "share", false, "print sevro.dev/r/<hash> for the sanitised analysis (no upload in Phase 1)")
+	cmd.Flags().BoolVar(&shareFlag, "share", false, "print optiqor.dev/r/<hash> for the sanitised analysis (no upload in Phase 1)")
 	cmd.Flags().BoolVar(&roast, "roast", false, "humorous output (findings stay accurate)")
 	cmd.Flags().StringVar(&minSev, "severity", "", "drop findings below this severity (low|med|high)")
 	cmd.Flags().StringArrayVar(&detectors, "detector", nil, "only run findings from these detector IDs (repeatable)")
@@ -201,7 +207,7 @@ inefficiencies and security findings.
 
 // emitReport renders the report in JSON or styled text. When
 // outputPath is non-empty the rendered bytes go to that file instead
-// of stdout (CI use case: `sevro analyze --json --output result.json`).
+// of stdout (CI use case: `optiqor analyze --json --output result.json`).
 func emitReport(cmd *cobra.Command, rep render.Report, jsonOut bool, outputPath string) error {
 	w, closeFn, err := openOutput(cmd, outputPath)
 	if err != nil {
@@ -232,15 +238,15 @@ func openOutput(cmd *cobra.Command, path string) (io.Writer, func(), error) {
 //
 // It computes the local content-addressable hash, attempts to upload
 // the sanitised payload to the sandbox endpoint, and prints the
-// resulting `sevro.dev/r/<hash>` URL to stderr (so JSON/text output on
+// resulting `optiqor.dev/r/<hash>` URL to stderr (so JSON/text output on
 // stdout stays clean).
 //
 // The function never blocks the caller's success path — if the upload
 // fails (offline, sandbox down, 5xx), we still print the URL so the
 // user has a stable identifier they can re-share later. The endpoint
-// is overridable via SEVRO_SHARE_URL for self-hosted deploys.
+// is overridable via OPTIQOR_SHARE_URL for self-hosted deploys.
 func emitShareURL(cmd *cobra.Command, rep any) {
-	endpoint := os.Getenv("SEVRO_SHARE_URL")
+	endpoint := os.Getenv("OPTIQOR_SHARE_URL")
 	res := share.Upload(rep, endpoint)
 	if res.Hash == "" {
 		// Hash failed entirely — nothing to print.
@@ -302,7 +308,7 @@ func toUpper(s string) string {
 }
 
 // demoChart is the bundled demo values file. //go:embed lets us ship
-// the fixture inside the binary so `npx @sevro/cli demo` works with
+// the fixture inside the binary so `npx @optiqor/cli demo` works with
 // no input.
 //
 //go:embed demo/values.yaml
@@ -313,7 +319,7 @@ func newDemoCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "demo",
 		Short:   "Run analysis on a bundled demo chart",
-		Example: `  sevro demo`,
+		Example: `  optiqor demo`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			rep, err := analyze.Run(bytesReader(demoChart), analyze.Options{Source: "demo"})
 			if err != nil {
@@ -422,7 +428,7 @@ func newDiffCmd() *cobra.Command {
 		Use:     "diff <a> <b>",
 		Short:   "Show cost delta between two values files",
 		Args:    cobra.ExactArgs(2),
-		Example: `  sevro diff ./before/values.yaml ./after/values.yaml`,
+		Example: `  optiqor diff ./before/values.yaml ./after/values.yaml`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			rep, err := analyze.DiffPaths(args[0], args[1])
 			if err != nil {
@@ -444,7 +450,7 @@ func newScoreCmd() *cobra.Command {
 		Use:     "score [chart]",
 		Short:   "Assign an efficiency score to a chart",
 		Args:    cobra.MaximumNArgs(1),
-		Example: "  sevro score ./my-chart\n  sevro score ./values.yaml --json",
+		Example: "  optiqor score ./my-chart\n  optiqor score ./values.yaml --json",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			path := "."
 			if len(args) == 1 {
@@ -479,7 +485,7 @@ func newAuditCmd() *cobra.Command {
 		Use:     "audit [chart]",
 		Short:   "Audit a chart for security findings only",
 		Args:    cobra.MaximumNArgs(1),
-		Example: "  sevro audit ./my-chart\n  sevro audit ./values.yaml --fail-on=high",
+		Example: "  optiqor audit ./my-chart\n  optiqor audit ./values.yaml --fail-on=high",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			path := "."
 			if len(args) == 1 {
@@ -522,7 +528,7 @@ func newCompareCmd() *cobra.Command {
 		Use:     "compare <a> <b>",
 		Short:   "Side-by-side comparison of two charts (currently a diff alias)",
 		Args:    cobra.ExactArgs(2),
-		Example: `  sevro compare ./before/values.yaml ./after/values.yaml`,
+		Example: `  optiqor compare ./before/values.yaml ./after/values.yaml`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			rep, err := analyze.DiffPaths(args[0], args[1])
 			if err != nil {
@@ -539,5 +545,5 @@ func newCompareCmd() *cobra.Command {
 }
 
 func notYetImplemented(cmd *cobra.Command) error {
-	return fmt.Errorf("`sevro %s` is not yet implemented (see https://sevro.dev/roadmap)", cmd.Name())
+	return fmt.Errorf("`optiqor %s` is not yet implemented (see https://optiqor.dev/roadmap)", cmd.Name())
 }

@@ -47,7 +47,7 @@ func TestGolden(t *testing.T) {
 			cmd.SetOut(&buf)
 			cmd.SetErr(&buf)
 			cmd.SetArgs(tc.args)
-			// Tests must run in the cmd/sevro directory so the
+			// Tests must run in the cmd/optiqor directory so the
 			// "../../testdata/..." paths resolve.
 			_ = cmd.Execute()
 			got := normalize(buf.String())

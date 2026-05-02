@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // runAsRoot fires when securityContext.runAsNonRoot is explicitly
 // false, OR when neither pod nor container security context declares

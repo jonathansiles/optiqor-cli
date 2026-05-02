@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/lowplane/sevro/internal/render"
-	"github.com/lowplane/sevro/internal/render/style"
+	"github.com/optiqor/optiqor-cli/internal/render"
+	"github.com/optiqor/optiqor-cli/internal/render/style"
 )
 
 // WriteText renders the score panel as styled text.
@@ -21,7 +21,7 @@ func (s Score) WriteText(w io.Writer, opts render.Options) error {
 
 	var b strings.Builder
 	fmt.Fprintf(&b, "%s\n", t.DividerLine(width))
-	fmt.Fprintf(&b, "  %s   %s\n", t.Brand.Render("sevro score"), t.Tagline.Render("Helm chart efficiency score"))
+	fmt.Fprintf(&b, "  %s   %s\n", t.Brand.Render("optiqor score"), t.Tagline.Render("Helm chart efficiency score"))
 	fmt.Fprintf(&b, "%s\n\n", t.DividerLine(width))
 
 	srcLabel := s.Source

@@ -102,7 +102,7 @@ func TestUpload_PostsSanitisedJSON(t *testing.T) {
 	)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotMethod = r.Method
-		gotHash = r.Header.Get("X-Sevro-Hash")
+		gotHash = r.Header.Get("X-Optiqor-Hash")
 		gotContent = r.Header.Get("Content-Type")
 		gotBody, _ = io.ReadAll(r.Body)
 		w.WriteHeader(http.StatusAccepted)
@@ -128,7 +128,7 @@ func TestUpload_PostsSanitisedJSON(t *testing.T) {
 		t.Errorf("content-type = %q", gotContent)
 	}
 	if gotHash != res.Hash {
-		t.Errorf("X-Sevro-Hash = %q, want %q", gotHash, res.Hash)
+		t.Errorf("X-Optiqor-Hash = %q, want %q", gotHash, res.Hash)
 	}
 	// Body must NOT contain the source path (PII sanitisation).
 	if strings.Contains(string(gotBody), "/tmp/x") {

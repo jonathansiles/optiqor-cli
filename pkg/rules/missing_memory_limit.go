@@ -1,7 +1,7 @@
 package rules
 
 import (
-	"github.com/lowplane/sevro/pkg/parser"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
 )
 
 // missingMemoryLimit flags workloads with a memory request but no

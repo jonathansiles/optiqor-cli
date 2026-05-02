@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // hostNetwork fires when hostNetwork=true. Host networking flattens
 // the pod's network namespace onto the node, exposing localhost-bound

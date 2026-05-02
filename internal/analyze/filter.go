@@ -3,8 +3,8 @@ package analyze
 import (
 	"strings"
 
-	"github.com/lowplane/sevro/internal/render"
-	"github.com/lowplane/sevro/pkg/rules"
+	"github.com/optiqor/optiqor-cli/internal/render"
+	"github.com/optiqor/optiqor-cli/pkg/rules"
 )
 
 // FilterOptions narrows a Report's findings before rendering.
@@ -13,7 +13,7 @@ import (
 //   - DetectorIDs (when non-empty) keeps only findings emitted by the
 //     listed detectors.
 //   - SecurityOnly keeps only the security-class detectors that the
-//     `sevro audit` command surfaces.
+//     `optiqor audit` command surfaces.
 type FilterOptions struct {
 	MinSeverity  rules.Severity
 	DetectorIDs  []string

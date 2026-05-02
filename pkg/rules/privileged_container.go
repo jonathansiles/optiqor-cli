@@ -1,6 +1,6 @@
 package rules
 
-import "github.com/lowplane/sevro/pkg/parser"
+import "github.com/optiqor/optiqor-cli/pkg/parser"
 
 // privilegedContainer fires when securityContext.privileged is true.
 // Privileged containers bypass nearly every isolation control the

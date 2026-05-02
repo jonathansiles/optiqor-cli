@@ -1,8 +1,8 @@
 package analyze
 
-import "github.com/lowplane/sevro/pkg/rules"
+import "github.com/optiqor/optiqor-cli/pkg/rules"
 
-// Score is the result of `sevro score [chart]` — a 0-100 efficiency
+// Score is the result of `optiqor score [chart]` — a 0-100 efficiency
 // score derived from the severities of detector findings, plus the
 // qualitative confidence band that score lives in.
 //

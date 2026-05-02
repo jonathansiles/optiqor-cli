@@ -1,6 +1,6 @@
-// Package analyze orchestrates one Sevro CLI run: parser → rules → render.
+// Package analyze orchestrates one Optiqor CLI run: parser → rules → render.
 //
-// Callers (cmd/sevro/main.go, tests, future SDK consumers) hand in a
+// Callers (cmd/optiqor/main.go, tests, future SDK consumers) hand in a
 // values reader and an Options struct, get back a render.Report.
 package analyze
 
@@ -10,9 +10,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/lowplane/sevro/internal/render"
-	"github.com/lowplane/sevro/pkg/parser"
-	"github.com/lowplane/sevro/pkg/rules"
+	"github.com/optiqor/optiqor-cli/internal/render"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
+	"github.com/optiqor/optiqor-cli/pkg/rules"
 )
 
 // Options controls a single analysis run.

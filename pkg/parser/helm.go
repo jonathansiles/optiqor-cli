@@ -36,7 +36,7 @@ type Workload struct {
 }
 
 // SecurityContext is the subset of pod / container `securityContext`
-// fields Sevro inspects. Nil pointers preserve "not declared" — a
+// fields Optiqor inspects. Nil pointers preserve "not declared" — a
 // workload that has `runAsNonRoot: false` is materially different from
 // one that omits the field entirely.
 type SecurityContext struct {

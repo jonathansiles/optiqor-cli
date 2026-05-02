@@ -11,18 +11,18 @@ import (
 	"io"
 	"strings"
 
-	"github.com/lowplane/sevro/internal/render/style"
-	"github.com/lowplane/sevro/pkg/rules"
+	"github.com/optiqor/optiqor-cli/internal/render/style"
+	"github.com/optiqor/optiqor-cli/pkg/rules"
 )
 
 // AccuracyDisclosure is the mandatory line every output must contain.
-const AccuracyDisclosure = "Sandbox accuracy: ±40%. Install the Sevro agent for exact numbers (sevro.dev/get)."
+const AccuracyDisclosure = "Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get)."
 
 // Brand strings used in the header banner.
 const (
-	BrandName    = "sevro"
+	BrandName    = "optiqor"
 	BrandTagline = "Helm chart cost & security analysis"
-	GetURL       = "https://sevro.dev/get"
+	GetURL       = "https://optiqor.dev/get"
 )
 
 // Report is the renderer-facing view of an analysis run.
@@ -32,7 +32,7 @@ type Report struct {
 	Findings  []rules.Finding `json:"findings"`
 }
 
-// Options controls how a Report is rendered. Callers (cmd/sevro/main.go)
+// Options controls how a Report is rendered. Callers (cmd/optiqor/main.go)
 // detect TTY + NO_COLOR + --no-color and set Color accordingly.
 type Options struct {
 	Color bool // false → plain ASCII, no ANSI; true → branded styled output
@@ -52,7 +52,7 @@ func (r Report) MonthlySavingsUSDCents() int64 {
 //
 // Layout:
 //
-//	╭─ sevro ────────────  v ───────╮
+//	╭─ optiqor ────────────  v ───────╮
 //	│ <tagline>                     │
 //	╰───────────────────────────────╯
 //	source: …
@@ -68,7 +68,7 @@ func (r Report) MonthlySavingsUSDCents() int64 {
 //
 //	───────────────────────────────
 //	estimated monthly savings: $X (±40%)
-//	→ install agent for exact numbers: sevro.dev/get
+//	→ install agent for exact numbers: optiqor.dev/get
 func Text(w io.Writer, r Report, opts Options) error {
 	t := style.NewTheme(opts.Color)
 	width := opts.Width
@@ -171,7 +171,7 @@ func writeFooter(b *strings.Builder, t style.Theme, width int, totalCents int64)
 	// Style the label first; then wrap with OSC 8. Wrapping the
 	// hyperlink escape with another lipgloss render breaks the
 	// sequence because lipgloss styles each character.
-	linkLabel := t.CallToLink.Render("sevro.dev/get")
+	linkLabel := t.CallToLink.Render("optiqor.dev/get")
 	fmt.Fprintf(b, "  %s %s\n",
 		t.Muted.Render("→ install the agent for exact numbers:"),
 		t.Hyperlink(linkLabel, GetURL),

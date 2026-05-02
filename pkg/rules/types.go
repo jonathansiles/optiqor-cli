@@ -9,7 +9,7 @@ package rules
 import (
 	"sort"
 
-	"github.com/lowplane/sevro/pkg/parser"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
 )
 
 // Severity captures the suggested triage urgency.

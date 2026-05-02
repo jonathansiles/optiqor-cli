@@ -3,8 +3,8 @@ package analyze
 import (
 	"testing"
 
-	"github.com/lowplane/sevro/internal/render"
-	"github.com/lowplane/sevro/pkg/rules"
+	"github.com/optiqor/optiqor-cli/internal/render"
+	"github.com/optiqor/optiqor-cli/pkg/rules"
 )
 
 func sample() render.Report {

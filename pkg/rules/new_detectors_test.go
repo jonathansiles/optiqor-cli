@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lowplane/sevro/pkg/parser"
+	"github.com/optiqor/optiqor-cli/pkg/parser"
 )
 
 func TestMemoryOverprovisioned_Triggers(t *testing.T) {

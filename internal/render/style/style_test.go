@@ -10,7 +10,7 @@ func TestNewTheme_PlainOmitsAnsi(t *testing.T) {
 	for _, s := range []string{
 		th.SeverityBadge("HIGH"),
 		th.ConfidenceDots("high"),
-		th.Brand.Render("Sevro"),
+		th.Brand.Render("Optiqor"),
 		th.DividerLine(40),
 	} {
 		if strings.Contains(s, "\x1b") {
@@ -47,8 +47,8 @@ func TestConfidenceDots_LabelsPresent(t *testing.T) {
 }
 
 func TestHyperlink_PlainFallback(t *testing.T) {
-	got := NewTheme(false).Hyperlink("link", "https://sevro.dev")
-	if !strings.Contains(got, "https://sevro.dev") {
+	got := NewTheme(false).Hyperlink("link", "https://optiqor.dev")
+	if !strings.Contains(got, "https://optiqor.dev") {
 		t.Errorf("plain hyperlink should expose URL: %q", got)
 	}
 	if strings.Contains(got, "\x1b") {
@@ -57,7 +57,7 @@ func TestHyperlink_PlainFallback(t *testing.T) {
 }
 
 func TestHyperlink_ColorEmitsOSC8(t *testing.T) {
-	got := NewTheme(true).Hyperlink("link", "https://sevro.dev")
+	got := NewTheme(true).Hyperlink("link", "https://optiqor.dev")
 	if !strings.Contains(got, "\x1b]8;") {
 		t.Errorf("OSC 8 missing: %q", got)
 	}

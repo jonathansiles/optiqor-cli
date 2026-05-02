@@ -1,8 +1,8 @@
 ────────────────────────────────────────────────────────────────────────────────
-  sevro score   Helm chart efficiency score
+  optiqor score   Helm chart efficiency score
 ────────────────────────────────────────────────────────────────────────────────
 
-  source: /home/shivam/Desktop/Merge/sevro/testdata/fixtures/basic-chart/values.yaml
+  source: /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
   workloads analyzed: 15
 
   score:  0 / 100    ●○○ low
@@ -40,4 +40,4 @@
     unbounded-image-tag                -10
 
 ────────────────────────────────────────────────────────────────────────────────
-  Sandbox accuracy: ±40%. Install the Sevro agent for exact numbers (sevro.dev/get).
+  Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get).

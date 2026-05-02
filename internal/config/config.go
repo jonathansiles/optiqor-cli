@@ -1,15 +1,15 @@
-// Package config loads `.sevro.yaml` for the CLI.
+// Package config loads `.optiqor.yaml` for the CLI.
 //
 // The config file lets users persist common flag combinations (e.g.
 // "always exclude this detector", "always set --severity=med") so a
-// `sevro analyze` invocation in a known repo behaves consistently
+// `optiqor analyze` invocation in a known repo behaves consistently
 // without flag-soup. Flags still override config when supplied.
 //
 // Lookup order (first match wins):
 //
 //  1. --config <path>
-//  2. SEVRO_CONFIG env var
-//  3. ./.sevro.yaml in the current working directory
+//  2. OPTIQOR_CONFIG env var
+//  3. ./.optiqor.yaml in the current working directory
 //  4. zero value (no config)
 package config
 
@@ -38,18 +38,18 @@ type Config struct {
 
 // ConfigName is the conventional filename. Hidden so it doesn't
 // clutter `ls`.
-const ConfigName = ".sevro.yaml"
+const ConfigName = ".optiqor.yaml"
 
 // Load resolves and reads the config. Returns the zero Config when no
 // file is present (which is the safe default — users opt in by
 // creating one). Returns an error only when a file is named
-// explicitly via --config or SEVRO_CONFIG and that file fails to
+// explicitly via --config or OPTIQOR_CONFIG and that file fails to
 // load.
 func Load(explicit string) (Config, error) {
 	if explicit != "" {
 		return readFile(explicit)
 	}
-	if env := os.Getenv("SEVRO_CONFIG"); env != "" {
+	if env := os.Getenv("OPTIQOR_CONFIG"); env != "" {
 		return readFile(env)
 	}
 	cwd, err := os.Getwd()
