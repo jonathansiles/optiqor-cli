@@ -89,6 +89,30 @@ sudo mv optiqor /usr/local/bin/
 > [!TIP]
 > All release artifacts are signed with [Cosign](https://docs.sigstore.dev/cosign/overview/). Verification instructions on the [release page](https://github.com/optiqor/optiqor-cli/releases).
 
+### Option 5: Build from source
+
+Requirements: Go 1.23+ and `make` (the Makefile drives a `-trimpath` reproducible build with the version stamped from `git describe`).
+
+```sh
+git clone https://github.com/optiqor/optiqor-cli
+cd optiqor-cli
+
+# Recommended — produces ./bin/optiqor with version baked in:
+make build
+./bin/optiqor demo
+
+# Plain `go build` works too:
+go build -o optiqor ./cmd/optiqor
+./optiqor demo
+
+# Install onto your $PATH:
+make install            # uses go install with the same -trimpath/ldflags
+# or:
+go install github.com/optiqor/optiqor-cli/cmd/optiqor@latest
+```
+
+Other useful targets: `make test` (race-enabled, no caching), `make lint` (golangci-lint), `make vet`, `make fmt`, `make release-dryrun` (GoReleaser snapshot), `make clean`.
+
 ---
 
 ## Quick Start
@@ -204,47 +228,96 @@ Flags always override config values when supplied.
 
 ## Example Output
 
+`npx @optiqor/cli demo` produces a branded report with an executive summary, a boxed cost-finding card per optimization (with an inline `request ████░░░░ limit` ratio bar), and a compact "bonus" block for security misconfigurations spotted while parsing.
+
 ```
-$ npx @optiqor/cli analyze ./charts/postgresql
+────────────────────────────────────────────────────────────────────────────────
+  ◐  optiqor
+  Helm chart cost optimization · security as a bonus
+────────────────────────────────────────────────────────────────────────────────
 
-Optiqor Analysis ----------------------------------- optiqor.dev
-chart      bitnami/postgresql 12.5.7
-namespace  database
-context    static analysis from values.yaml
+  Source      demo
+  Workloads   15 workloads analyzed
+  Cost        25 optimizations · save ~$35.39/mo (~$424.68/yr) ±40%
+  Security    49 findings — bonus, surfaced while parsing
 
-Cost findings (3)
-  [HIGH]   Overprovisioned CPU request           save ~$340/mo   confidence: medium
-           primary.resources.requests.cpu = 4    suggested: 1.5
-           reason: 90th percentile sandbox baseline for similar charts
+━━ Cost optimizations ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  [MED]    Persistent volume size oversized      save ~$80/mo    confidence: low
-           primary.persistence.size = 100Gi      suggested: 30Gi
-           reason: declared size 3x typical for this chart pattern
+  ┌─ MED · api ──────────────────────────────────────────────── save ~$29.20/mo ─┐
+  │                                                                              │
+  │ CPU request appears overprovisioned                                          │
+  │                                                                              │
+  │ CPU      2      ███████████████████░░░░░ 2.5   80% of limit                  │
+  │                                                                              │
+  │ Request 2 vs limit 2.5 — typical utilization rarely justifies this           │
+  │ ratio. Consider halving the request.                                         │
+  │                                                                              │
+  │ confidence: ●●○ medium                                                       │
+  └──────────────────────────────────────────────────────────────────────────────┘
 
-  [LOW]    No autoscaling configured             save ~$45/mo    confidence: low
-           primary.replicaCount = 3 (static)
-           reason: HPA could right-size off-hours
+  …  more cost cards, ordered by savings descending
 
-Security findings (bonus, 2)
-  [MED]    Missing memory limit on primary container
-           risk: OOM noisy-neighbor; pod may be evicted under memory pressure
-           CIS Kubernetes Benchmark 5.7.4
+━━ Security findings  (bonus, 49) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Spotted while parsing your chart. Cost is the headline; this is a bonus.
 
-  [LOW]    Image tag is ":latest"
-           risk: unreproducible deploys, no rollback target
-           CIS Kubernetes Benchmark 5.5.1
+   HIGH   admin-tool      ●●●   allowPrivilegeEscalation explicitly enabled
+   HIGH   admin-tool      ●●●   Container declared privileged
+   HIGH   admin-tool      ●●●   Container runs as root
+   MED    api             ●●○   runAsNonRoot not declared
+   …
 
-Summary
-  estimated monthly cost      $1,140
-  estimated monthly savings   $465 (40 percent)
-  efficiency score            58 / 100
+  Run `optiqor audit` to focus only on these findings.
 
-Sandbox accuracy: plus or minus 40 percent. Install the Optiqor agent for
-exact numbers backed by 30 days of real Prometheus data and your AWS bill:
-  https://optiqor.dev/get
-
-Share this analysis: https://optiqor.dev/r/9f3a1c  (run with --share)
+────────────────────────────────────────────────────────────────────────────────
+  estimated monthly savings: $35.39/mo   (±40%)
+  Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get).
+  → install the agent for exact numbers: optiqor.dev/get
 ```
+
+### `--roast` mode
+
+Same findings, snarkier titles. Detail text, severities, dollar estimates, and the mandatory accuracy disclosure are unchanged — only `Title` and the brand tagline get a tone-pass. Zero LLM calls; the rewrite is a static map of detector ID → snark.
+
+```sh
+npx @optiqor/cli demo --roast
+```
+
+```
+  Helm chart cost roast — your YAML deserves it
+  …
+  ┌─ MED · api ──────────────────────────────────────────────── save ~$29.20/mo ─┐
+  │ CPU on a buffet plan, eating air                                             │
+  │ CPU      2      ███████████████████░░░░░ 2.5   80% of limit                  │
+  …
+  Receipts > vibes. Install the agent for the actual bill: optiqor.dev/get
+```
+
+### `score` — letter grade + percentile
+
+`optiqor score` puts the social-shareable signal up top: a letter grade with a percentile rank against a baked-in benchmark distribution. The numeric 0–100 score still appears for CI gates and analytics.
+
+```sh
+npx @optiqor/cli score ./my-chart
+```
+
+```
+  ◐  optiqor score   Helm chart efficiency grade
+
+  Source      ./my-chart/values.yaml
+  Workloads   8 analyzed
+
+  Grade        B+   better than 64% of 100 benchmark charts
+  Score        82 / 100   ●●○ medium
+
+  Penalty breakdown
+    cpu-overprovisioned                 -10
+    image-pinned-latest                 -8
+    …
+
+  Calibration: static benchmark distribution; agent install unlocks live percentile vs your fleet.
+```
+
+The calibration is a static distribution baked into the binary — no telemetry, no network call. Live percentiles against your fleet land with the agent install.
 
 ---
 
