@@ -37,6 +37,9 @@ const FooterQuip = "Receipts > vibes. Install the agent for the actual bill: opt
 //
 // Ordering follows pkg/rules.All() so a code reviewer can scan top-
 // to-bottom and check every detector got a line.
+//
+//nolint:gosec // G101 false positive: this map keys detector IDs to
+// joke titles; nothing here is a credential.
 var titles = map[string]string{
 	// ---- Cost / efficiency ----------------------------------------
 	"cpu-overprovisioned":         "CPU on a buffet plan, eating air",

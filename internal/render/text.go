@@ -275,7 +275,9 @@ func writeCostSection(b *strings.Builder, t style.Theme, width int, findings []r
 // a confidence footer. On very narrow terminals (<cardMinInner inner
 // width) it gracefully degrades to a flat layout.
 func writeCostFinding(b *strings.Builder, t style.Theme, f rules.Finding, width int) {
-	innerWidth := width - len(contentIndent) - 2 // 2 = "│ " + " │"
+	// Card body cells = innerWidth + 4 — see writeCardHeaderRule for
+	// the breakdown ("│ " on the left, " │" on the right).
+	innerWidth := width - len(contentIndent) - 2
 	if innerWidth < cardMinInner {
 		writeCostFindingFlat(b, t, f, width)
 		return
@@ -365,11 +367,11 @@ func writeCardHeaderRule(b *strings.Builder, t style.Theme, sev rules.Severity, 
 	// What's left is what the labels + gap may use.
 	usable := innerWidth // = (innerWidth+4) - 2 corners - 2 lead/trail dashes
 	if len(leftRunes)+len(rightRunes) > usable {
-		max := usable - len(rightRunes)
-		if max < 4 {
-			max = 4
+		maxLeft := usable - len(rightRunes)
+		if maxLeft < 4 {
+			maxLeft = 4
 		}
-		leftRunes = leftRunes[:max]
+		leftRunes = leftRunes[:maxLeft]
 	}
 	gap := usable - len(leftRunes) - len(rightRunes)
 	if gap < 1 {
@@ -411,8 +413,10 @@ func stylizeSeverityWord(t style.Theme, sev rules.Severity, label string) string
 	}
 	// Use a foreground-only re-render here — we don't want the
 	// background-coloured badge style inside a header rule, just the
-	// matching foreground tone.
-	return sevStyle.Copy().Background(noBackground()).Render(sevTok) +
+	// matching foreground tone. lipgloss styles are value types, so
+	// `.Background(...)` returns a new style; the original badge in
+	// the Theme is unaffected.
+	return sevStyle.Background(noBackground()).Render(sevTok) +
 		t.CardBorder.Render(rest)
 }
 
