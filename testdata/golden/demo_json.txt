@@ -10,7 +10,8 @@
       "Detail": "securityContext.allowPrivilegeEscalation=true lets a process gain capabilities its parent didn't have (setuid, file capabilities). Set allowPrivilegeEscalation=false unless you're running an init system or known-good legacy binary that requires it.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "privileged-container",
@@ -19,7 +20,8 @@
       "Detail": "securityContext.privileged=true bypasses every Linux capability check. Privileged is correct only for node-level agents (CSI drivers, node exporters); application workloads should set privileged=false and request the specific capabilities they actually need.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "run-as-root",
@@ -28,7 +30,8 @@
       "Detail": "securityContext.runAsNonRoot is set to false. Running as UID 0 expands the blast radius of any container escape. Set runAsNonRoot=true and runAsUser to a non-zero UID.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -37,7 +40,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -46,7 +50,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "allow-privilege-escalation",
@@ -55,7 +60,8 @@
       "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -64,7 +70,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-overprovisioned",
@@ -73,7 +80,8 @@
       "Detail": "Request 2 vs limit 2.5 — typical utilization rarely justifies this ratio. Consider halving the request.",
       "MonthlyUSDCents": 2920,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "memory-overprovisioned",
@@ -82,7 +90,8 @@
       "Detail": "Request 1.6Gi vs limit 2Gi — typical utilization rarely justifies this ratio. Consider halving the request.",
       "MonthlyUSDCents": 279,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "run-as-root",
@@ -91,7 +100,8 @@
       "Detail": "securityContext.runAsNonRoot is not declared. Without it, Kubernetes defers to the image's USER directive — which is UID 0 for most public images. Set runAsNonRoot=true to make the intent explicit.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -100,7 +110,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "read-only-root-fs-missing",
@@ -109,7 +120,8 @@
       "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -118,7 +130,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-limit-far-above-request",
@@ -127,7 +140,8 @@
       "Detail": "Request 200m vs limit 2 — a 10.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "memory-limit-far-above-request",
@@ -136,7 +150,8 @@
       "Detail": "Request 256Mi vs limit 4Gi — a 16.0x burst window. Memory limits aren't elastic the way CPU is: a pod that climbs to its limit will OOM, taking neighbours down via node memory pressure. Tighten the limit toward observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -145,7 +160,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "allow-privilege-escalation",
@@ -154,7 +170,8 @@
       "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -163,7 +180,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-limit-far-above-request",
@@ -172,7 +190,8 @@
       "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "image-pinned-latest",
@@ -181,7 +200,8 @@
       "Detail": "Image redis:latest uses :latest. The same tag can resolve to different bytes across deploys; rollback becomes ambiguous. Pin to an immutable digest or version tag.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -190,7 +210,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "read-only-root-fs-missing",
@@ -199,7 +220,8 @@
       "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-limit-far-above-request",
@@ -208,7 +230,8 @@
       "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -217,7 +240,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -226,7 +250,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "unbounded-image-tag",
@@ -235,7 +260,8 @@
       "Detail": "Image tag 'main' is a floating reference: upstream re-points it whenever they publish. The same Helm release can therefore land different bytes on consecutive deploys, and rollbacks become ambiguous. Pin to an immutable digest or version tag.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "cost"
     },
     {
       "DetectorID": "read-only-root-fs-missing",
@@ -244,7 +270,8 @@
       "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-overprovisioned",
@@ -253,7 +280,8 @@
       "Detail": "Request 200m vs limit 200m — typical utilization rarely justifies this ratio. Consider halving the request.",
       "MonthlyUSDCents": 292,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "memory-overprovisioned",
@@ -262,7 +290,8 @@
       "Detail": "Request 256Mi vs limit 256Mi — typical utilization rarely justifies this ratio. Consider halving the request.",
       "MonthlyUSDCents": 43,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -271,7 +300,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-request-equals-limit",
@@ -280,7 +310,8 @@
       "Detail": "Request and limit both set to 200m, putting the pod in Guaranteed QoS — top eviction priority but zero burst headroom. Confirm this is intentional for an SLO-bound workload; otherwise lower the request to allow the scheduler to bin-pack more densely.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "memory-request-equals-limit",
@@ -289,7 +320,8 @@
       "Detail": "Memory request and limit both set to 256Mi. Memory is non-burstable anyway, so this only affects QoS class; for SLO-bound workloads it's correct, otherwise lower the request to ~P95 to free node capacity for other pods.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "cpu-overprovisioned",
@@ -298,7 +330,8 @@
       "Detail": "Request 5m vs limit 5m — typical utilization rarely justifies this ratio. Consider halving the request.",
       "MonthlyUSDCents": 5,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "cpu-request-equals-limit",
@@ -307,7 +340,8 @@
       "Detail": "Request and limit both set to 5m, putting the pod in Guaranteed QoS — top eviction priority but zero burst headroom. Confirm this is intentional for an SLO-bound workload; otherwise lower the request to allow the scheduler to bin-pack more densely.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "cpu-without-memory-request",
@@ -316,7 +350,8 @@
       "Detail": "requests.cpu is set but requests.memory is not. The scheduler can't reserve memory accurately, so the pod is BestEffort for memory — first to evict under pressure. Add a memory request matching observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "cost"
     },
     {
       "DetectorID": "tiny-cpu-request",
@@ -325,7 +360,8 @@
       "Detail": "requests.cpu is 5m — below the 10m threshold most charts use as a sentinel. Probably a placeholder from a Helm scaffold. Set it to your observed P95 (or remove the limit-without-request asymmetry the scheduler is currently dealing with).",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "cost"
     },
     {
       "DetectorID": "allow-privilege-escalation",
@@ -334,7 +370,8 @@
       "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -343,7 +380,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-limit-far-above-request",
@@ -352,7 +390,8 @@
       "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "image-pinned-latest",
@@ -361,7 +400,8 @@
       "Detail": "Image fluentd uses (no tag). The same tag can resolve to different bytes across deploys; rollback becomes ambiguous. Pin to an immutable digest or version tag.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -370,7 +410,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "read-only-root-fs-missing",
@@ -379,7 +420,8 @@
       "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "excessive-replica-count",
@@ -388,7 +430,8 @@
       "Detail": "Replicas set to 25. Past ~20 replicas the cost grows linearly while the marginal availability gain approaches zero — most cloud zones can't fit that many across enough fault domains. Cap the HPA's maxReplicas or split the workload across multiple deployments.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "oversized-cpu-limit",
@@ -397,7 +440,8 @@
       "Detail": "CPU limit is 8. Above 4 vCPU, the pod can only land on large nodes; smaller / Spot instance types are excluded from bin-packing. Either split the workload or confirm the high limit is justified by P99.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "oversized-memory-limit",
@@ -406,7 +450,8 @@
       "Detail": "Memory limit is 32Gi. Above 16 GiB, the pod can only land on memory-class nodes; balanced / Spot bin-packing is excluded. Confirm the workload genuinely uses this much, or split the workload.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "replicas-too-high",
@@ -415,7 +460,8 @@
       "Detail": "Replicas set to 25 without an HPA. Static high replica counts pay for unused capacity 24/7. Either enable autoscaling.enabled=true or right-size the static count to your observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "host-ipc",
@@ -424,7 +470,8 @@
       "Detail": "hostIPC=true puts the pod in the node's IPC namespace, so it can read and write SysV shared memory and POSIX message queues used by other pods on the same node. Almost never required; turn it off unless the workload's documented dependency demands it.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "missing-memory-limit",
@@ -433,7 +480,8 @@
       "Detail": "This workload declares a memory request but no limit. Without a limit it can consume node memory unbounded and evict neighbours under pressure. Set a limit at or above your observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "memory-without-cpu-request",
@@ -442,7 +490,8 @@
       "Detail": "requests.memory is set but requests.cpu is not. The scheduler can't reserve CPU, so bin-packing assumes zero — pods can stack onto a single node and starve each other. Add a CPU request matching observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "cost"
     },
     {
       "DetectorID": "tiny-memory-request",
@@ -451,7 +500,8 @@
       "Detail": "requests.memory is 16Mi — below 32 MiB. A workload that genuinely needs less memory is a rarity; most charts setting tiny memory requests are using a placeholder. Set it to your observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "cost"
     },
     {
       "DetectorID": "dangerous-capability-added",
@@ -460,7 +510,8 @@
       "Detail": "securityContext.capabilities.add includes 1 escalation-class capability(s): SYS_PTRACE (attach to other processes' memory; can read secrets out of co-tenant pods). Each grants abilities far beyond what an application workload should need. Drop them and reach for a sidecar / DaemonSet that runs in a more privileged ServiceAccount if the underlying need is legitimate.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "host-pid",
@@ -469,7 +520,8 @@
       "Detail": "hostPID=true gives the pod's processes visibility into every other process on the node — including kubelet, the container runtime, and every co-tenant pod. Required for a tiny set of node-level agents (debuggers, profilers); never appropriate for application workloads.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "run-as-root",
@@ -478,7 +530,8 @@
       "Detail": "securityContext.runAsNonRoot is set to false. Running as UID 0 expands the blast radius of any container escape. Set runAsNonRoot=true and runAsUser to a non-zero UID.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "runs-as-uid-zero",
@@ -487,7 +540,8 @@
       "Detail": "securityContext.runAsUser is set to 0. This forces the container to run as UID 0 (root) regardless of the image's USER directive — a hard override that's almost always wrong for application workloads. Set runAsUser to a non-zero UID (1000+) and runAsNonRoot=true.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "allow-privilege-escalation",
@@ -496,7 +550,8 @@
       "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -505,7 +560,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-limit-far-above-request",
@@ -514,7 +570,8 @@
       "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "read-only-root-fs-missing",
@@ -523,7 +580,8 @@
       "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "allow-privilege-escalation",
@@ -532,7 +590,8 @@
       "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -541,7 +600,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "cpu-limit-far-above-request",
@@ -550,7 +610,8 @@
       "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "replicas-too-high",
@@ -559,7 +620,8 @@
       "Detail": "Replicas set to 10 without an HPA. Static high replica counts pay for unused capacity 24/7. Either enable autoscaling.enabled=true or right-size the static count to your observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "cost"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -568,7 +630,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "read-only-root-fs-missing",
@@ -577,7 +640,8 @@
       "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "host-network",
@@ -586,7 +650,8 @@
       "Detail": "hostNetwork=true puts the pod in the node's network namespace, bypassing NetworkPolicy and exposing localhost services on the host. Required for some CNI plugins and ingress controllers; otherwise leave it unset.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "host-path-volume",
@@ -595,7 +660,8 @@
       "Detail": "A volume of type hostPath exposes the node's filesystem to the pod. Required for some node-level agents (log collectors, CNI helpers) but a sharp edge for application workloads — a path-traversal bug suddenly becomes a node compromise. Replace with PVC, configMap, or downward API where possible.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -604,7 +670,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -613,7 +680,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "missing-memory-limit",
@@ -622,7 +690,8 @@
       "Detail": "This workload declares a memory request but no limit. Without a limit it can consume node memory unbounded and evict neighbours under pressure. Set a limit at or above your observed P95.",
       "MonthlyUSDCents": 0,
       "Severity": "HIGH",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "allow-privilege-escalation",
@@ -631,7 +700,8 @@
       "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "capabilities-not-dropped-all",
@@ -640,7 +710,8 @@
       "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "high"
+      "Confidence": "high",
+      "Category": "security"
     },
     {
       "DetectorID": "service-account-token-automount",
@@ -649,7 +720,8 @@
       "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
       "MonthlyUSDCents": 0,
       "Severity": "MED",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "missing-cpu-limit",
@@ -658,7 +730,8 @@
       "Detail": "This workload declares a CPU request but no limit. Some teams omit CPU limits intentionally to avoid throttling; others expect predictable scheduling. Confirm this is the intended posture.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     },
     {
       "DetectorID": "read-only-root-fs-missing",
@@ -667,8 +740,754 @@
       "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
       "MonthlyUSDCents": 0,
       "Severity": "LOW",
-      "Confidence": "medium"
+      "Confidence": "medium",
+      "Category": "security"
     }
   ],
-  "monthly_savings_usd": 35.39
+  "cost_findings": [
+    {
+      "DetectorID": "cpu-overprovisioned",
+      "Workload": "api",
+      "Title": "CPU request appears overprovisioned",
+      "Detail": "Request 2 vs limit 2.5 — typical utilization rarely justifies this ratio. Consider halving the request.",
+      "MonthlyUSDCents": 2920,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "memory-overprovisioned",
+      "Workload": "api",
+      "Title": "Memory request appears overprovisioned",
+      "Detail": "Request 1.6Gi vs limit 2Gi — typical utilization rarely justifies this ratio. Consider halving the request.",
+      "MonthlyUSDCents": 279,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-limit-far-above-request",
+      "Workload": "bursty",
+      "Title": "CPU limit is many multiples of the request",
+      "Detail": "Request 200m vs limit 2 — a 10.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "memory-limit-far-above-request",
+      "Workload": "bursty",
+      "Title": "Memory limit is many multiples of the request",
+      "Detail": "Request 256Mi vs limit 4Gi — a 16.0x burst window. Memory limits aren't elastic the way CPU is: a pod that climbs to its limit will OOM, taking neighbours down via node memory pressure. Tighten the limit toward observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-limit-far-above-request",
+      "Workload": "cache",
+      "Title": "CPU limit is many multiples of the request",
+      "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-limit-far-above-request",
+      "Workload": "clean",
+      "Title": "CPU limit is many multiples of the request",
+      "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "unbounded-image-tag",
+      "Workload": "dev-build",
+      "Title": "Floating image tag prevents reproducible deploys",
+      "Detail": "Image tag 'main' is a floating reference: upstream re-points it whenever they publish. The same Helm release can therefore land different bytes on consecutive deploys, and rollbacks become ambiguous. Pin to an immutable digest or version tag.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-overprovisioned",
+      "Workload": "guaranteed",
+      "Title": "CPU request appears overprovisioned",
+      "Detail": "Request 200m vs limit 200m — typical utilization rarely justifies this ratio. Consider halving the request.",
+      "MonthlyUSDCents": 292,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "memory-overprovisioned",
+      "Workload": "guaranteed",
+      "Title": "Memory request appears overprovisioned",
+      "Detail": "Request 256Mi vs limit 256Mi — typical utilization rarely justifies this ratio. Consider halving the request.",
+      "MonthlyUSDCents": 43,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-request-equals-limit",
+      "Workload": "guaranteed",
+      "Title": "CPU request equals limit (Guaranteed QoS)",
+      "Detail": "Request and limit both set to 200m, putting the pod in Guaranteed QoS — top eviction priority but zero burst headroom. Confirm this is intentional for an SLO-bound workload; otherwise lower the request to allow the scheduler to bin-pack more densely.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "memory-request-equals-limit",
+      "Workload": "guaranteed",
+      "Title": "Memory request equals limit (Guaranteed QoS)",
+      "Detail": "Memory request and limit both set to 256Mi. Memory is non-burstable anyway, so this only affects QoS class; for SLO-bound workloads it's correct, otherwise lower the request to ~P95 to free node capacity for other pods.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-overprovisioned",
+      "Workload": "incomplete",
+      "Title": "CPU request appears overprovisioned",
+      "Detail": "Request 5m vs limit 5m — typical utilization rarely justifies this ratio. Consider halving the request.",
+      "MonthlyUSDCents": 5,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-request-equals-limit",
+      "Workload": "incomplete",
+      "Title": "CPU request equals limit (Guaranteed QoS)",
+      "Detail": "Request and limit both set to 5m, putting the pod in Guaranteed QoS — top eviction priority but zero burst headroom. Confirm this is intentional for an SLO-bound workload; otherwise lower the request to allow the scheduler to bin-pack more densely.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-without-memory-request",
+      "Workload": "incomplete",
+      "Title": "CPU request set without memory request",
+      "Detail": "requests.cpu is set but requests.memory is not. The scheduler can't reserve memory accurately, so the pod is BestEffort for memory — first to evict under pressure. Add a memory request matching observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "high",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "tiny-cpu-request",
+      "Workload": "incomplete",
+      "Title": "CPU request below the placeholder threshold",
+      "Detail": "requests.cpu is 5m — below the 10m threshold most charts use as a sentinel. Probably a placeholder from a Helm scaffold. Set it to your observed P95 (or remove the limit-without-request asymmetry the scheduler is currently dealing with).",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "high",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-limit-far-above-request",
+      "Workload": "logger",
+      "Title": "CPU limit is many multiples of the request",
+      "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "excessive-replica-count",
+      "Workload": "megabox",
+      "Title": "Replica count past the HA inflection point",
+      "Detail": "Replicas set to 25. Past ~20 replicas the cost grows linearly while the marginal availability gain approaches zero — most cloud zones can't fit that many across enough fault domains. Cap the HPA's maxReplicas or split the workload across multiple deployments.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "oversized-cpu-limit",
+      "Workload": "megabox",
+      "Title": "CPU limit forces large-node scheduling",
+      "Detail": "CPU limit is 8. Above 4 vCPU, the pod can only land on large nodes; smaller / Spot instance types are excluded from bin-packing. Either split the workload or confirm the high limit is justified by P99.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "oversized-memory-limit",
+      "Workload": "megabox",
+      "Title": "Memory limit forces large-node scheduling",
+      "Detail": "Memory limit is 32Gi. Above 16 GiB, the pod can only land on memory-class nodes; balanced / Spot bin-packing is excluded. Confirm the workload genuinely uses this much, or split the workload.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "replicas-too-high",
+      "Workload": "megabox",
+      "Title": "High static replica count without an autoscaler",
+      "Detail": "Replicas set to 25 without an HPA. Static high replica counts pay for unused capacity 24/7. Either enable autoscaling.enabled=true or right-size the static count to your observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "memory-without-cpu-request",
+      "Workload": "memhog",
+      "Title": "Memory request set without CPU request",
+      "Detail": "requests.memory is set but requests.cpu is not. The scheduler can't reserve CPU, so bin-packing assumes zero — pods can stack onto a single node and starve each other. Add a CPU request matching observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "high",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "tiny-memory-request",
+      "Workload": "memhog",
+      "Title": "Memory request below the placeholder threshold",
+      "Detail": "requests.memory is 16Mi — below 32 MiB. A workload that genuinely needs less memory is a rarity; most charts setting tiny memory requests are using a placeholder. Set it to your observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "high",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-limit-far-above-request",
+      "Workload": "ptrace-hunter",
+      "Title": "CPU limit is many multiples of the request",
+      "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "cpu-limit-far-above-request",
+      "Workload": "shipper",
+      "Title": "CPU limit is many multiples of the request",
+      "Detail": "Request 100m vs limit 500m — a 5.0x burst window. The scheduler reserves only the request, so the pod can suddenly consume far more than its node-allocation suggests. Tighten the limit or raise the request to match observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    },
+    {
+      "DetectorID": "replicas-too-high",
+      "Workload": "shipper",
+      "Title": "High static replica count without an autoscaler",
+      "Detail": "Replicas set to 10 without an HPA. Static high replica counts pay for unused capacity 24/7. Either enable autoscaling.enabled=true or right-size the static count to your observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "cost"
+    }
+  ],
+  "security_findings_bonus": [
+    {
+      "DetectorID": "allow-privilege-escalation",
+      "Workload": "admin-tool",
+      "Title": "allowPrivilegeEscalation explicitly enabled",
+      "Detail": "securityContext.allowPrivilegeEscalation=true lets a process gain capabilities its parent didn't have (setuid, file capabilities). Set allowPrivilegeEscalation=false unless you're running an init system or known-good legacy binary that requires it.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "privileged-container",
+      "Workload": "admin-tool",
+      "Title": "Container declared privileged",
+      "Detail": "securityContext.privileged=true bypasses every Linux capability check. Privileged is correct only for node-level agents (CSI drivers, node exporters); application workloads should set privileged=false and request the specific capabilities they actually need.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "run-as-root",
+      "Workload": "admin-tool",
+      "Title": "Container runs as root",
+      "Detail": "securityContext.runAsNonRoot is set to false. Running as UID 0 expands the blast radius of any container escape. Set runAsNonRoot=true and runAsUser to a non-zero UID.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "admin-tool",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "admin-tool",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "allow-privilege-escalation",
+      "Workload": "api",
+      "Title": "allowPrivilegeEscalation not declared",
+      "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "api",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "run-as-root",
+      "Workload": "api",
+      "Title": "runAsNonRoot not declared",
+      "Detail": "securityContext.runAsNonRoot is not declared. Without it, Kubernetes defers to the image's USER directive — which is UID 0 for most public images. Set runAsNonRoot=true to make the intent explicit.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "api",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "read-only-root-fs-missing",
+      "Workload": "api",
+      "Title": "readOnlyRootFilesystem not declared",
+      "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "bursty",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "bursty",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "allow-privilege-escalation",
+      "Workload": "cache",
+      "Title": "allowPrivilegeEscalation not declared",
+      "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "cache",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "image-pinned-latest",
+      "Workload": "cache",
+      "Title": "Image not pinned to a stable tag",
+      "Detail": "Image redis:latest uses :latest. The same tag can resolve to different bytes across deploys; rollback becomes ambiguous. Pin to an immutable digest or version tag.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "cache",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "read-only-root-fs-missing",
+      "Workload": "cache",
+      "Title": "readOnlyRootFilesystem not declared",
+      "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "dev-build",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "dev-build",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "read-only-root-fs-missing",
+      "Workload": "dev-build",
+      "Title": "readOnlyRootFilesystem not declared",
+      "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "guaranteed",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "allow-privilege-escalation",
+      "Workload": "logger",
+      "Title": "allowPrivilegeEscalation not declared",
+      "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "logger",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "image-pinned-latest",
+      "Workload": "logger",
+      "Title": "Image not pinned to a stable tag",
+      "Detail": "Image fluentd uses (no tag). The same tag can resolve to different bytes across deploys; rollback becomes ambiguous. Pin to an immutable digest or version tag.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "logger",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "read-only-root-fs-missing",
+      "Workload": "logger",
+      "Title": "readOnlyRootFilesystem not declared",
+      "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "host-ipc",
+      "Workload": "memhog",
+      "Title": "Pod shares the host IPC namespace",
+      "Detail": "hostIPC=true puts the pod in the node's IPC namespace, so it can read and write SysV shared memory and POSIX message queues used by other pods on the same node. Almost never required; turn it off unless the workload's documented dependency demands it.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "missing-memory-limit",
+      "Workload": "memhog",
+      "Title": "Memory limit not set",
+      "Detail": "This workload declares a memory request but no limit. Without a limit it can consume node memory unbounded and evict neighbours under pressure. Set a limit at or above your observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "dangerous-capability-added",
+      "Workload": "ptrace-hunter",
+      "Title": "Dangerous Linux capability added",
+      "Detail": "securityContext.capabilities.add includes 1 escalation-class capability(s): SYS_PTRACE (attach to other processes' memory; can read secrets out of co-tenant pods). Each grants abilities far beyond what an application workload should need. Drop them and reach for a sidecar / DaemonSet that runs in a more privileged ServiceAccount if the underlying need is legitimate.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "host-pid",
+      "Workload": "ptrace-hunter",
+      "Title": "Pod shares the host PID namespace",
+      "Detail": "hostPID=true gives the pod's processes visibility into every other process on the node — including kubelet, the container runtime, and every co-tenant pod. Required for a tiny set of node-level agents (debuggers, profilers); never appropriate for application workloads.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "run-as-root",
+      "Workload": "ptrace-hunter",
+      "Title": "Container runs as root",
+      "Detail": "securityContext.runAsNonRoot is set to false. Running as UID 0 expands the blast radius of any container escape. Set runAsNonRoot=true and runAsUser to a non-zero UID.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "runs-as-uid-zero",
+      "Workload": "ptrace-hunter",
+      "Title": "runAsUser explicitly set to 0",
+      "Detail": "securityContext.runAsUser is set to 0. This forces the container to run as UID 0 (root) regardless of the image's USER directive — a hard override that's almost always wrong for application workloads. Set runAsUser to a non-zero UID (1000+) and runAsNonRoot=true.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "allow-privilege-escalation",
+      "Workload": "ptrace-hunter",
+      "Title": "allowPrivilegeEscalation not declared",
+      "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "ptrace-hunter",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "read-only-root-fs-missing",
+      "Workload": "ptrace-hunter",
+      "Title": "readOnlyRootFilesystem not declared",
+      "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "allow-privilege-escalation",
+      "Workload": "shipper",
+      "Title": "allowPrivilegeEscalation not declared",
+      "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "shipper",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "shipper",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "read-only-root-fs-missing",
+      "Workload": "shipper",
+      "Title": "readOnlyRootFilesystem not declared",
+      "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "host-network",
+      "Workload": "sniffer",
+      "Title": "Pod uses host network",
+      "Detail": "hostNetwork=true puts the pod in the node's network namespace, bypassing NetworkPolicy and exposing localhost services on the host. Required for some CNI plugins and ingress controllers; otherwise leave it unset.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "host-path-volume",
+      "Workload": "sniffer",
+      "Title": "Pod mounts a hostPath volume",
+      "Detail": "A volume of type hostPath exposes the node's filesystem to the pod. Required for some node-level agents (log collectors, CNI helpers) but a sharp edge for application workloads — a path-traversal bug suddenly becomes a node compromise. Replace with PVC, configMap, or downward API where possible.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "sniffer",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "sniffer",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "missing-memory-limit",
+      "Workload": "worker",
+      "Title": "Memory limit not set",
+      "Detail": "This workload declares a memory request but no limit. Without a limit it can consume node memory unbounded and evict neighbours under pressure. Set a limit at or above your observed P95.",
+      "MonthlyUSDCents": 0,
+      "Severity": "HIGH",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "allow-privilege-escalation",
+      "Workload": "worker",
+      "Title": "allowPrivilegeEscalation not declared",
+      "Detail": "securityContext.allowPrivilegeEscalation is undeclared; Kubernetes defaults it to true. Set allowPrivilegeEscalation=false to make the no_new_privs bit explicit.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "capabilities-not-dropped-all",
+      "Workload": "worker",
+      "Title": "capabilities.drop does not include ALL",
+      "Detail": "Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop: [ALL] with add: [...] re-granting only the specific capabilities required. The current chart does not drop ALL, so the container inherits the default capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "high",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "service-account-token-automount",
+      "Workload": "worker",
+      "Title": "ServiceAccount token automatically mounted",
+      "Detail": "automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a service-account credential at /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads never read it; an attacker on the pod gets a free pivot to the K8s API. Set automountServiceAccountToken=false unless the workload genuinely calls the API.",
+      "MonthlyUSDCents": 0,
+      "Severity": "MED",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "missing-cpu-limit",
+      "Workload": "worker",
+      "Title": "CPU limit not set",
+      "Detail": "This workload declares a CPU request but no limit. Some teams omit CPU limits intentionally to avoid throttling; others expect predictable scheduling. Confirm this is the intended posture.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    },
+    {
+      "DetectorID": "read-only-root-fs-missing",
+      "Workload": "worker",
+      "Title": "readOnlyRootFilesystem not declared",
+      "Detail": "securityContext.readOnlyRootFilesystem is not declared. Declare readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs volumes for legitimate write paths.",
+      "MonthlyUSDCents": 0,
+      "Severity": "LOW",
+      "Confidence": "medium",
+      "Category": "security"
+    }
+  ],
+  "monthly_savings_usd": 35.39,
+  "annual_savings_usd": 424.68
 }

@@ -35,6 +35,23 @@ const (
 	ConfidenceLow  Confidence = "low"
 )
 
+// Category classifies a finding by what it actually helps the user do.
+// Optiqor's headline product is cost optimization; security findings
+// surface as a bonus side-effect of parsing Helm charts and render
+// separately so the cost signal is never drowned out.
+//
+// Category is set on every [Finding] by the engine in [Run] from the
+// owning [Detector]'s Category() method. Detectors should declare it
+// once at the type level rather than per-finding.
+type Category string
+
+// Category values. Add new categories here and to the renderer's
+// section ordering before introducing them in detectors.
+const (
+	CategoryCost     Category = "cost"
+	CategorySecurity Category = "security"
+)
+
 // Finding is a single detector output. Renderers consume a slice of
 // these; the rule engine never speaks UI.
 type Finding struct {
@@ -58,24 +75,42 @@ type Finding struct {
 
 	Severity   Severity
 	Confidence Confidence
+
+	// Category is filled by [Run] from the owning detector's
+	// [Detector.Category]. Detectors that pre-set it on their findings
+	// keep their value — useful for synthetic findings that span
+	// categories.
+	Category Category
 }
 
 // Detector inspects a parser.Workload and returns zero or more
 // findings. Implementations must be deterministic and side-effect free.
+//
+// Category() declares which product surface the detector serves; the
+// engine stamps it onto every Finding the detector emits so renderers
+// and filters can group without inspecting detector IDs.
 type Detector interface {
 	ID() string
 	Name() string
+	Category() Category
 	Run(parser.Workload) []Finding
 }
 
 // Run applies every detector to every workload and returns the merged,
 // sorted findings list. Sort order is stable so renderers and golden
-// tests are deterministic.
+// tests are deterministic. Each finding's Category is populated from
+// its detector unless the detector already set it.
 func Run(workloads []parser.Workload, dets []Detector) []Finding {
 	out := make([]Finding, 0, len(workloads)*len(dets))
 	for _, w := range workloads {
 		for _, d := range dets {
-			out = append(out, d.Run(w)...)
+			cat := d.Category()
+			for _, f := range d.Run(w) {
+				if f.Category == "" {
+					f.Category = cat
+				}
+				out = append(out, f)
+			}
 		}
 	}
 	sort.SliceStable(out, func(i, j int) bool {

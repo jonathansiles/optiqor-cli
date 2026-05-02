@@ -115,7 +115,7 @@ func TestText_NoFindingsCelebrates(t *testing.T) {
 		t.Fatal(err)
 	}
 	out := buf.String()
-	for _, want := range []string{"5 workloads", "0 findings", "Clean", "No findings"} {
+	for _, want := range []string{"5 workloads", "no cost waste detected", "Clean", "No findings"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("missing %q in:\n%s", want, out)
 		}
@@ -136,6 +136,7 @@ func TestText_RendersFindings(t *testing.T) {
 				MonthlyUSDCents: 12345,
 				Severity:        rules.SeverityMed,
 				Confidence:      rules.ConfidenceMed,
+				Category:        rules.CategoryCost,
 			},
 			{
 				DetectorID: "missing-memory-limit",
@@ -144,6 +145,7 @@ func TestText_RendersFindings(t *testing.T) {
 				Detail:     "Without a limit it can consume node memory unbounded.",
 				Severity:   rules.SeverityHigh,
 				Confidence: rules.ConfidenceHigh,
+				Category:   rules.CategorySecurity,
 			},
 		},
 	}
@@ -153,7 +155,7 @@ func TestText_RendersFindings(t *testing.T) {
 	out := buf.String()
 	for _, want := range []string{
 		"optiqor",
-		"Helm chart cost & security analysis",
+		BrandTagline,
 		"HIGH",
 		"MED",
 		"Memory limit not set",
@@ -162,8 +164,9 @@ func TestText_RendersFindings(t *testing.T) {
 		"optiqor.dev/get",
 		"±40%",
 		"confidence:",
-		"high",
-		"medium",
+		"Cost optimizations",
+		"Security findings",
+		"bonus",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("missing %q in:\n%s", want, out)

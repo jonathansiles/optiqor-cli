@@ -1,23 +1,20 @@
 ────────────────────────────────────────────────────────────────────────────────
-  optiqor   Helm chart cost & security analysis
+  ◐  optiqor
+  Helm chart cost optimization · security as a bonus
 ────────────────────────────────────────────────────────────────────────────────
 
-  source: /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
-  15 workloads · 2 findings
+  Source      /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
+  Workloads   15 workloads analyzed
+  Cost        ✓ no cost waste detected
+  Security    2 findings — bonus, surfaced while parsing
 
-   MED    cache
-    Image not pinned to a stable tag
-    Image redis:latest uses :latest. The same tag can resolve to different
-    bytes across deploys; rollback becomes ambiguous. Pin to an immutable
-    digest or version tag.
-    confidence: ●●● high
+━━ Security findings  (bonus, 2) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Spotted while parsing your chart. Cost is the headline; this is a bonus.
 
-   MED    logger
-    Image not pinned to a stable tag
-    Image fluentd uses (no tag). The same tag can resolve to different bytes
-    across deploys; rollback becomes ambiguous. Pin to an immutable digest or
-    version tag.
-    confidence: ●●● high
+   MED    cache    ●●●   Image not pinned to a stable tag
+   MED    logger   ●●●   Image not pinned to a stable tag
+
+  Run `optiqor audit` to focus only on these findings.
 
 ────────────────────────────────────────────────────────────────────────────────
   Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get).

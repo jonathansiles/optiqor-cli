@@ -1,103 +1,30 @@
 ────────────────────────────────────────────────────────────────────────────────
-  optiqor   Helm chart cost & security analysis
+  ◐  optiqor
+  Helm chart cost optimization · security as a bonus
 ────────────────────────────────────────────────────────────────────────────────
 
-  source: /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
-  15 workloads · 12 findings
+  Source      /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
+  Workloads   15 workloads analyzed
+  Cost        ✓ no cost waste detected
+  Security    12 findings — bonus, surfaced while parsing
 
-   HIGH   admin-tool
-    allowPrivilegeEscalation explicitly enabled
-    securityContext.allowPrivilegeEscalation=true lets a process gain
-    capabilities its parent didn't have (setuid, file capabilities). Set
-    allowPrivilegeEscalation=false unless you're running an init system or
-    known-good legacy binary that requires it.
-    confidence: ●●● high
+━━ Security findings  (bonus, 12) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Spotted while parsing your chart. Cost is the headline; this is a bonus.
 
-   HIGH   admin-tool
-    Container declared privileged
-    securityContext.privileged=true bypasses every Linux capability check.
-    Privileged is correct only for node-level agents (CSI drivers, node
-    exporters); application workloads should set privileged=false and request
-    the specific capabilities they actually need.
-    confidence: ●●● high
+   HIGH   admin-tool      ●●●   allowPrivilegeEscalation explicitly enabled
+   HIGH   admin-tool      ●●●   Container declared privileged
+   HIGH   admin-tool      ●●●   Container runs as root
+   HIGH   memhog          ●●●   Pod shares the host IPC namespace
+   HIGH   memhog          ●●●   Memory limit not set
+   HIGH   ptrace-hunter   ●●●   Dangerous Linux capability added
+   HIGH   ptrace-hunter   ●●●   Pod shares the host PID namespace
+   HIGH   ptrace-hunter   ●●●   Container runs as root
+   HIGH   ptrace-hunter   ●●●   runAsUser explicitly set to 0
+   HIGH   sniffer         ●●●   Pod uses host network
+   HIGH   sniffer         ●●●   Pod mounts a hostPath volume
+   HIGH   worker          ●●●   Memory limit not set
 
-   HIGH   admin-tool
-    Container runs as root
-    securityContext.runAsNonRoot is set to false. Running as UID 0 expands the
-    blast radius of any container escape. Set runAsNonRoot=true and runAsUser
-    to a non-zero UID.
-    confidence: ●●● high
-
-   HIGH   memhog
-    Pod shares the host IPC namespace
-    hostIPC=true puts the pod in the node's IPC namespace, so it can read and
-    write SysV shared memory and POSIX message queues used by other pods on
-    the same node. Almost never required; turn it off unless the workload's
-    documented dependency demands it.
-    confidence: ●●● high
-
-   HIGH   memhog
-    Memory limit not set
-    This workload declares a memory request but no limit. Without a limit it
-    can consume node memory unbounded and evict neighbours under pressure. Set
-    a limit at or above your observed P95.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    Dangerous Linux capability added
-    securityContext.capabilities.add includes 1 escalation-class
-    capability(s): SYS_PTRACE (attach to other processes' memory; can read
-    secrets out of co-tenant pods). Each grants abilities far beyond what an
-    application workload should need. Drop them and reach for a sidecar /
-    DaemonSet that runs in a more privileged ServiceAccount if the underlying
-    need is legitimate.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    Pod shares the host PID namespace
-    hostPID=true gives the pod's processes visibility into every other process
-    on the node — including kubelet, the container runtime, and every
-    co-tenant pod. Required for a tiny set of node-level agents (debuggers,
-    profilers); never appropriate for application workloads.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    Container runs as root
-    securityContext.runAsNonRoot is set to false. Running as UID 0 expands the
-    blast radius of any container escape. Set runAsNonRoot=true and runAsUser
-    to a non-zero UID.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    runAsUser explicitly set to 0
-    securityContext.runAsUser is set to 0. This forces the container to run as
-    UID 0 (root) regardless of the image's USER directive — a hard override
-    that's almost always wrong for application workloads. Set runAsUser to a
-    non-zero UID (1000+) and runAsNonRoot=true.
-    confidence: ●●● high
-
-   HIGH   sniffer
-    Pod uses host network
-    hostNetwork=true puts the pod in the node's network namespace, bypassing
-    NetworkPolicy and exposing localhost services on the host. Required for
-    some CNI plugins and ingress controllers; otherwise leave it unset.
-    confidence: ●●● high
-
-   HIGH   sniffer
-    Pod mounts a hostPath volume
-    A volume of type hostPath exposes the node's filesystem to the pod.
-    Required for some node-level agents (log collectors, CNI helpers) but a
-    sharp edge for application workloads — a path-traversal bug suddenly
-    becomes a node compromise. Replace with PVC, configMap, or downward API
-    where possible.
-    confidence: ●●● high
-
-   HIGH   worker
-    Memory limit not set
-    This workload declares a memory request but no limit. Without a limit it
-    can consume node memory unbounded and evict neighbours under pressure. Set
-    a limit at or above your observed P95.
-    confidence: ●●● high
+  Run `optiqor audit` to focus only on these findings.
 
 ────────────────────────────────────────────────────────────────────────────────
   Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get).

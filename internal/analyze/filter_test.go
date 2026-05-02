@@ -12,11 +12,11 @@ func sample() render.Report {
 		Source:    "x",
 		Workloads: 3,
 		Findings: []rules.Finding{
-			{DetectorID: "cpu-overprovisioned", Severity: rules.SeverityMed},
-			{DetectorID: "memory-overprovisioned", Severity: rules.SeverityMed},
-			{DetectorID: "missing-memory-limit", Severity: rules.SeverityHigh},
-			{DetectorID: "missing-cpu-limit", Severity: rules.SeverityLow},
-			{DetectorID: "image-pinned-latest", Severity: rules.SeverityMed},
+			{DetectorID: "cpu-overprovisioned", Severity: rules.SeverityMed, Category: rules.CategoryCost},
+			{DetectorID: "memory-overprovisioned", Severity: rules.SeverityMed, Category: rules.CategoryCost},
+			{DetectorID: "missing-memory-limit", Severity: rules.SeverityHigh, Category: rules.CategorySecurity},
+			{DetectorID: "missing-cpu-limit", Severity: rules.SeverityLow, Category: rules.CategorySecurity},
+			{DetectorID: "image-pinned-latest", Severity: rules.SeverityMed, Category: rules.CategorySecurity},
 		},
 	}
 }
@@ -32,8 +32,8 @@ func TestFilter_NoOptionsPassthrough(t *testing.T) {
 func TestFilter_SecurityOnly(t *testing.T) {
 	out := Filter(sample(), FilterOptions{SecurityOnly: true})
 	for _, f := range out.Findings {
-		if !SecurityDetectorIDs[f.DetectorID] {
-			t.Errorf("non-security detector leaked: %q", f.DetectorID)
+		if f.Category != rules.CategorySecurity {
+			t.Errorf("non-security finding leaked: %+v", f)
 		}
 	}
 	if len(out.Findings) != 3 {

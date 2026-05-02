@@ -12,33 +12,12 @@ import (
 //   - MinSeverity drops findings whose severity is below the threshold.
 //   - DetectorIDs (when non-empty) keeps only findings emitted by the
 //     listed detectors.
-//   - SecurityOnly keeps only the security-class detectors that the
+//   - SecurityOnly keeps only the security-class findings that the
 //     `optiqor audit` command surfaces.
 type FilterOptions struct {
 	MinSeverity  rules.Severity
 	DetectorIDs  []string
 	SecurityOnly bool
-}
-
-// SecurityDetectorIDs is the closed set the audit command considers
-// "security-class". New security detectors must be added here so the
-// audit command picks them up.
-var SecurityDetectorIDs = map[string]bool{
-	"missing-cpu-limit":               true,
-	"missing-memory-limit":            true,
-	"image-pinned-latest":             true,
-	"run-as-root":                     true,
-	"runs-as-uid-zero":                true,
-	"privileged-container":            true,
-	"host-network":                    true,
-	"host-pid":                        true,
-	"host-ipc":                        true,
-	"read-only-root-fs-missing":       true,
-	"allow-privilege-escalation":      true,
-	"host-path-volume":                true,
-	"dangerous-capability-added":      true,
-	"capabilities-not-dropped-all":    true,
-	"service-account-token-automount": true,
 }
 
 // Filter applies the options to a Report's findings and returns a
@@ -47,17 +26,19 @@ func Filter(r render.Report, opts FilterOptions) render.Report {
 	if opts.MinSeverity == "" && len(opts.DetectorIDs) == 0 && !opts.SecurityOnly {
 		return r
 	}
-	allowed := map[string]bool{}
+	allowed := make(map[string]struct{}, len(opts.DetectorIDs))
 	for _, d := range opts.DetectorIDs {
-		allowed[strings.TrimSpace(d)] = true
+		allowed[strings.TrimSpace(d)] = struct{}{}
 	}
 	out := make([]rules.Finding, 0, len(r.Findings))
 	for _, f := range r.Findings {
-		if opts.SecurityOnly && !SecurityDetectorIDs[f.DetectorID] {
+		if opts.SecurityOnly && f.Category != rules.CategorySecurity {
 			continue
 		}
-		if len(allowed) > 0 && !allowed[f.DetectorID] {
-			continue
+		if len(allowed) > 0 {
+			if _, ok := allowed[f.DetectorID]; !ok {
+				continue
+			}
 		}
 		if opts.MinSeverity != "" && severityRank(f.Severity) < severityRank(opts.MinSeverity) {
 			continue

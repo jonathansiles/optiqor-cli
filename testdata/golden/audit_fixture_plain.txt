@@ -1,402 +1,67 @@
 ────────────────────────────────────────────────────────────────────────────────
-  optiqor   Helm chart cost & security analysis
+  ◐  optiqor
+  Helm chart cost optimization · security as a bonus
 ────────────────────────────────────────────────────────────────────────────────
 
-  source: /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
-  15 workloads · 49 findings
+  Source      /home/shivam/Desktop/optiqor/optiqor-cli/testdata/fixtures/basic-chart/values.yaml
+  Workloads   15 workloads analyzed
+  Cost        ✓ no cost waste detected
+  Security    49 findings — bonus, surfaced while parsing
 
-   HIGH   admin-tool
-    allowPrivilegeEscalation explicitly enabled
-    securityContext.allowPrivilegeEscalation=true lets a process gain
-    capabilities its parent didn't have (setuid, file capabilities). Set
-    allowPrivilegeEscalation=false unless you're running an init system or
-    known-good legacy binary that requires it.
-    confidence: ●●● high
+━━ Security findings  (bonus, 49) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Spotted while parsing your chart. Cost is the headline; this is a bonus.
 
-   HIGH   admin-tool
-    Container declared privileged
-    securityContext.privileged=true bypasses every Linux capability check.
-    Privileged is correct only for node-level agents (CSI drivers, node
-    exporters); application workloads should set privileged=false and request
-    the specific capabilities they actually need.
-    confidence: ●●● high
+   HIGH   admin-tool      ●●●   allowPrivilegeEscalation explicitly enabled
+   HIGH   admin-tool      ●●●   Container declared privileged
+   HIGH   admin-tool      ●●●   Container runs as root
+   MED    admin-tool      ●●●   capabilities.drop does not include ALL
+   MED    admin-tool      ●●○   ServiceAccount token automatically mounted
+   MED    api             ●●○   allowPrivilegeEscalation not declared
+   MED    api             ●●●   capabilities.drop does not include ALL
+   MED    api             ●●○   runAsNonRoot not declared
+   MED    api             ●●○   ServiceAccount token automatically mounted
+   LOW    api             ●●○   readOnlyRootFilesystem not declared
+   MED    bursty          ●●●   capabilities.drop does not include ALL
+   MED    bursty          ●●○   ServiceAccount token automatically mounted
+   MED    cache           ●●○   allowPrivilegeEscalation not declared
+   MED    cache           ●●●   capabilities.drop does not include ALL
+   MED    cache           ●●●   Image not pinned to a stable tag
+   MED    cache           ●●○   ServiceAccount token automatically mounted
+   LOW    cache           ●●○   readOnlyRootFilesystem not declared
+   MED    dev-build       ●●●   capabilities.drop does not include ALL
+   MED    dev-build       ●●○   ServiceAccount token automatically mounted
+   LOW    dev-build       ●●○   readOnlyRootFilesystem not declared
+   MED    guaranteed      ●●○   ServiceAccount token automatically mounted
+   MED    logger          ●●○   allowPrivilegeEscalation not declared
+   MED    logger          ●●●   capabilities.drop does not include ALL
+   MED    logger          ●●●   Image not pinned to a stable tag
+   MED    logger          ●●○   ServiceAccount token automatically mounted
+   LOW    logger          ●●○   readOnlyRootFilesystem not declared
+   HIGH   memhog          ●●●   Pod shares the host IPC namespace
+   HIGH   memhog          ●●●   Memory limit not set
+   HIGH   ptrace-hunter   ●●●   Dangerous Linux capability added
+   HIGH   ptrace-hunter   ●●●   Pod shares the host PID namespace
+   HIGH   ptrace-hunter   ●●●   Container runs as root
+   HIGH   ptrace-hunter   ●●●   runAsUser explicitly set to 0
+   MED    ptrace-hunter   ●●○   allowPrivilegeEscalation not declared
+   MED    ptrace-hunter   ●●●   capabilities.drop does not include ALL
+   LOW    ptrace-hunter   ●●○   readOnlyRootFilesystem not declared
+   MED    shipper         ●●○   allowPrivilegeEscalation not declared
+   MED    shipper         ●●●   capabilities.drop does not include ALL
+   MED    shipper         ●●○   ServiceAccount token automatically mounted
+   LOW    shipper         ●●○   readOnlyRootFilesystem not declared
+   HIGH   sniffer         ●●●   Pod uses host network
+   HIGH   sniffer         ●●●   Pod mounts a hostPath volume
+   MED    sniffer         ●●●   capabilities.drop does not include ALL
+   MED    sniffer         ●●○   ServiceAccount token automatically mounted
+   HIGH   worker          ●●●   Memory limit not set
+   MED    worker          ●●○   allowPrivilegeEscalation not declared
+   MED    worker          ●●●   capabilities.drop does not include ALL
+   MED    worker          ●●○   ServiceAccount token automatically mounted
+   LOW    worker          ●●○   CPU limit not set
+   LOW    worker          ●●○   readOnlyRootFilesystem not declared
 
-   HIGH   admin-tool
-    Container runs as root
-    securityContext.runAsNonRoot is set to false. Running as UID 0 expands the
-    blast radius of any container escape. Set runAsNonRoot=true and runAsUser
-    to a non-zero UID.
-    confidence: ●●● high
-
-   MED    admin-tool
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    admin-tool
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   MED    api
-    allowPrivilegeEscalation not declared
-    securityContext.allowPrivilegeEscalation is undeclared; Kubernetes
-    defaults it to true. Set allowPrivilegeEscalation=false to make the
-    no_new_privs bit explicit.
-    confidence: ●●○ medium
-
-   MED    api
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    api
-    runAsNonRoot not declared
-    securityContext.runAsNonRoot is not declared. Without it, Kubernetes
-    defers to the image's USER directive — which is UID 0 for most public
-    images. Set runAsNonRoot=true to make the intent explicit.
-    confidence: ●●○ medium
-
-   MED    api
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   LOW    api
-    readOnlyRootFilesystem not declared
-    securityContext.readOnlyRootFilesystem is not declared. Declare
-    readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs
-    volumes for legitimate write paths.
-    confidence: ●●○ medium
-
-   MED    bursty
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    bursty
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   MED    cache
-    allowPrivilegeEscalation not declared
-    securityContext.allowPrivilegeEscalation is undeclared; Kubernetes
-    defaults it to true. Set allowPrivilegeEscalation=false to make the
-    no_new_privs bit explicit.
-    confidence: ●●○ medium
-
-   MED    cache
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    cache
-    Image not pinned to a stable tag
-    Image redis:latest uses :latest. The same tag can resolve to different
-    bytes across deploys; rollback becomes ambiguous. Pin to an immutable
-    digest or version tag.
-    confidence: ●●● high
-
-   MED    cache
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   LOW    cache
-    readOnlyRootFilesystem not declared
-    securityContext.readOnlyRootFilesystem is not declared. Declare
-    readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs
-    volumes for legitimate write paths.
-    confidence: ●●○ medium
-
-   MED    dev-build
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    dev-build
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   LOW    dev-build
-    readOnlyRootFilesystem not declared
-    securityContext.readOnlyRootFilesystem is not declared. Declare
-    readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs
-    volumes for legitimate write paths.
-    confidence: ●●○ medium
-
-   MED    guaranteed
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   MED    logger
-    allowPrivilegeEscalation not declared
-    securityContext.allowPrivilegeEscalation is undeclared; Kubernetes
-    defaults it to true. Set allowPrivilegeEscalation=false to make the
-    no_new_privs bit explicit.
-    confidence: ●●○ medium
-
-   MED    logger
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    logger
-    Image not pinned to a stable tag
-    Image fluentd uses (no tag). The same tag can resolve to different bytes
-    across deploys; rollback becomes ambiguous. Pin to an immutable digest or
-    version tag.
-    confidence: ●●● high
-
-   MED    logger
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   LOW    logger
-    readOnlyRootFilesystem not declared
-    securityContext.readOnlyRootFilesystem is not declared. Declare
-    readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs
-    volumes for legitimate write paths.
-    confidence: ●●○ medium
-
-   HIGH   memhog
-    Pod shares the host IPC namespace
-    hostIPC=true puts the pod in the node's IPC namespace, so it can read and
-    write SysV shared memory and POSIX message queues used by other pods on
-    the same node. Almost never required; turn it off unless the workload's
-    documented dependency demands it.
-    confidence: ●●● high
-
-   HIGH   memhog
-    Memory limit not set
-    This workload declares a memory request but no limit. Without a limit it
-    can consume node memory unbounded and evict neighbours under pressure. Set
-    a limit at or above your observed P95.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    Dangerous Linux capability added
-    securityContext.capabilities.add includes 1 escalation-class
-    capability(s): SYS_PTRACE (attach to other processes' memory; can read
-    secrets out of co-tenant pods). Each grants abilities far beyond what an
-    application workload should need. Drop them and reach for a sidecar /
-    DaemonSet that runs in a more privileged ServiceAccount if the underlying
-    need is legitimate.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    Pod shares the host PID namespace
-    hostPID=true gives the pod's processes visibility into every other process
-    on the node — including kubelet, the container runtime, and every
-    co-tenant pod. Required for a tiny set of node-level agents (debuggers,
-    profilers); never appropriate for application workloads.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    Container runs as root
-    securityContext.runAsNonRoot is set to false. Running as UID 0 expands the
-    blast radius of any container escape. Set runAsNonRoot=true and runAsUser
-    to a non-zero UID.
-    confidence: ●●● high
-
-   HIGH   ptrace-hunter
-    runAsUser explicitly set to 0
-    securityContext.runAsUser is set to 0. This forces the container to run as
-    UID 0 (root) regardless of the image's USER directive — a hard override
-    that's almost always wrong for application workloads. Set runAsUser to a
-    non-zero UID (1000+) and runAsNonRoot=true.
-    confidence: ●●● high
-
-   MED    ptrace-hunter
-    allowPrivilegeEscalation not declared
-    securityContext.allowPrivilegeEscalation is undeclared; Kubernetes
-    defaults it to true. Set allowPrivilegeEscalation=false to make the
-    no_new_privs bit explicit.
-    confidence: ●●○ medium
-
-   MED    ptrace-hunter
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   LOW    ptrace-hunter
-    readOnlyRootFilesystem not declared
-    securityContext.readOnlyRootFilesystem is not declared. Declare
-    readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs
-    volumes for legitimate write paths.
-    confidence: ●●○ medium
-
-   MED    shipper
-    allowPrivilegeEscalation not declared
-    securityContext.allowPrivilegeEscalation is undeclared; Kubernetes
-    defaults it to true. Set allowPrivilegeEscalation=false to make the
-    no_new_privs bit explicit.
-    confidence: ●●○ medium
-
-   MED    shipper
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    shipper
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   LOW    shipper
-    readOnlyRootFilesystem not declared
-    securityContext.readOnlyRootFilesystem is not declared. Declare
-    readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs
-    volumes for legitimate write paths.
-    confidence: ●●○ medium
-
-   HIGH   sniffer
-    Pod uses host network
-    hostNetwork=true puts the pod in the node's network namespace, bypassing
-    NetworkPolicy and exposing localhost services on the host. Required for
-    some CNI plugins and ingress controllers; otherwise leave it unset.
-    confidence: ●●● high
-
-   HIGH   sniffer
-    Pod mounts a hostPath volume
-    A volume of type hostPath exposes the node's filesystem to the pod.
-    Required for some node-level agents (log collectors, CNI helpers) but a
-    sharp edge for application workloads — a path-traversal bug suddenly
-    becomes a node compromise. Replace with PVC, configMap, or downward API
-    where possible.
-    confidence: ●●● high
-
-   MED    sniffer
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    sniffer
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   HIGH   worker
-    Memory limit not set
-    This workload declares a memory request but no limit. Without a limit it
-    can consume node memory unbounded and evict neighbours under pressure. Set
-    a limit at or above your observed P95.
-    confidence: ●●● high
-
-   MED    worker
-    allowPrivilegeEscalation not declared
-    securityContext.allowPrivilegeEscalation is undeclared; Kubernetes
-    defaults it to true. Set allowPrivilegeEscalation=false to make the
-    no_new_privs bit explicit.
-    confidence: ●●○ medium
-
-   MED    worker
-    capabilities.drop does not include ALL
-    Best-practice baseline (CIS 5.2.8) is securityContext.capabilities.drop:
-    [ALL] with add: [...] re-granting only the specific capabilities required.
-    The current chart does not drop ALL, so the container inherits the default
-    capability set including CHOWN, SETUID, SETGID, NET_BIND_SERVICE, etc.
-    confidence: ●●● high
-
-   MED    worker
-    ServiceAccount token automatically mounted
-    automountServiceAccountToken is undeclared, so Kubernetes auto-mounts a
-    service-account credential at
-    /var/run/secrets/kubernetes.io/serviceaccount/. Most application workloads
-    never read it; an attacker on the pod gets a free pivot to the K8s API.
-    Set automountServiceAccountToken=false unless the workload genuinely calls
-    the API.
-    confidence: ●●○ medium
-
-   LOW    worker
-    CPU limit not set
-    This workload declares a CPU request but no limit. Some teams omit CPU
-    limits intentionally to avoid throttling; others expect predictable
-    scheduling. Confirm this is the intended posture.
-    confidence: ●●○ medium
-
-   LOW    worker
-    readOnlyRootFilesystem not declared
-    securityContext.readOnlyRootFilesystem is not declared. Declare
-    readOnlyRootFilesystem=true to make hardening explicit; mount tmpfs
-    volumes for legitimate write paths.
-    confidence: ●●○ medium
+  Run `optiqor audit` to focus only on these findings.
 
 ────────────────────────────────────────────────────────────────────────────────
   Sandbox accuracy: ±40%. Install the Optiqor agent for exact numbers (optiqor.dev/get).

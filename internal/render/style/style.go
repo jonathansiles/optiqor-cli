@@ -16,6 +16,12 @@ import (
 	"github.com/muesli/termenv"
 )
 
+// BrandGlyph is the ASCII stand-in for the optiqor logomark — a
+// circular Q rendered at terminal scale. Using a single glyph keeps the
+// header readable on every emulator (we don't depend on Nerd Fonts or
+// Unicode powerline glyphs, which still render as boxes on stock CI).
+const BrandGlyph = "◐"
+
 // Theme bundles the entire palette + reusable styles. Construct one
 // per render invocation via NewTheme so colour-vs-plain is a single
 // decision, not threaded through every helper.
@@ -24,8 +30,14 @@ type Theme struct {
 
 	// Brand
 	Brand        lipgloss.Style
+	BrandMark    lipgloss.Style
 	Tagline      lipgloss.Style
 	HeaderBorder lipgloss.Style
+
+	// Sections
+	SectionPrimary lipgloss.Style // headline section (Cost optimizations)
+	SectionBonus   lipgloss.Style // bonus section (Security)
+	SectionSubtle  lipgloss.Style // light explanatory line under a section
 
 	// Severity badges
 	SevHigh lipgloss.Style
@@ -43,6 +55,7 @@ type Theme struct {
 	Title      lipgloss.Style
 	Detail     lipgloss.Style
 	Savings    lipgloss.Style
+	BigSavings lipgloss.Style // hero number in the executive summary
 	NoSavings  lipgloss.Style
 	Muted      lipgloss.Style
 	Divider    lipgloss.Style
@@ -92,8 +105,13 @@ func NewTheme(useColor bool) Theme {
 	return Theme{
 		UseColor:     true,
 		Brand:        r.NewStyle().Foreground(brand).Bold(true),
+		BrandMark:    r.NewStyle().Foreground(cyan).Bold(true),
 		Tagline:      r.NewStyle().Foreground(subtle).Italic(true),
 		HeaderBorder: r.NewStyle().Foreground(border),
+
+		SectionPrimary: r.NewStyle().Foreground(brand).Bold(true),
+		SectionBonus:   r.NewStyle().Foreground(amber).Bold(true),
+		SectionSubtle:  r.NewStyle().Foreground(subtle).Italic(true),
 
 		SevHigh: badge(red),
 		SevMed:  badge(amber),
@@ -108,6 +126,7 @@ func NewTheme(useColor bool) Theme {
 		Title:      r.NewStyle().Bold(true),
 		Detail:     r.NewStyle().Foreground(gray),
 		Savings:    r.NewStyle().Foreground(green).Bold(true),
+		BigSavings: r.NewStyle().Foreground(green).Bold(true),
 		NoSavings:  r.NewStyle().Foreground(subtle),
 		Muted:      r.NewStyle().Foreground(subtle),
 		Divider:    r.NewStyle().Foreground(border),
@@ -123,27 +142,32 @@ func NewTheme(useColor bool) Theme {
 func plainTheme() Theme {
 	plain := lipgloss.NewStyle()
 	return Theme{
-		UseColor:     false,
-		Brand:        plain,
-		Tagline:      plain,
-		HeaderBorder: plain,
-		SevHigh:      plain,
-		SevMed:       plain,
-		SevLow:       plain,
-		SevInfo:      plain,
-		ConfHigh:     plain,
-		ConfMed:      plain,
-		ConfLow:      plain,
-		Workload:     plain,
-		Title:        plain,
-		Detail:       plain,
-		Savings:      plain,
-		NoSavings:    plain,
-		Muted:        plain,
-		Divider:      plain,
-		Disclosure:   plain,
-		CallToLink:   plain,
-		OK:           plain,
+		UseColor:       false,
+		Brand:          plain,
+		BrandMark:      plain,
+		Tagline:        plain,
+		HeaderBorder:   plain,
+		SectionPrimary: plain,
+		SectionBonus:   plain,
+		SectionSubtle:  plain,
+		SevHigh:        plain,
+		SevMed:         plain,
+		SevLow:         plain,
+		SevInfo:        plain,
+		ConfHigh:       plain,
+		ConfMed:        plain,
+		ConfLow:        plain,
+		Workload:       plain,
+		Title:          plain,
+		Detail:         plain,
+		Savings:        plain,
+		BigSavings:     plain,
+		NoSavings:      plain,
+		Muted:          plain,
+		Divider:        plain,
+		Disclosure:     plain,
+		CallToLink:     plain,
+		OK:             plain,
 	}
 }
 
@@ -163,6 +187,28 @@ func (t Theme) DividerLine(width int) string {
 		width = 64
 	}
 	return t.Divider.Render(repeat("─", width))
+}
+
+// SectionRule renders a labelled section divider using heavy hyphens
+// so it visually outranks the regular dividers around the header and
+// footer. Renders identically with or without color.
+//
+//	━━ <label> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//
+// padLeft/padRight let callers indent the rule to match surrounding
+// content. accent picks the colour applied to the label and the rule.
+func (t Theme) SectionRule(label string, width int, accent lipgloss.Style) string {
+	if width <= 0 {
+		width = 64
+	}
+	prefix := "━━ "
+	rendered := accent.Render(prefix + label + " ")
+	consumed := len([]rune(prefix + label + " "))
+	remaining := width - consumed
+	if remaining < 4 {
+		remaining = 4
+	}
+	return rendered + accent.Render(repeat("━", remaining))
 }
 
 // SeverityBadge picks the right badge style for a severity string and
@@ -191,6 +237,22 @@ func (t Theme) ConfidenceDots(conf string) string {
 		return t.ConfLow.Render("●") + t.Muted.Render("○○") + " " + t.Muted.Render("low")
 	default:
 		return t.Muted.Render("○○○ unknown")
+	}
+}
+
+// ConfidenceGlyph is a compact dot-only confidence indicator (no
+// trailing word), used by the bonus-section one-liners where vertical
+// density matters more than self-description.
+func (t Theme) ConfidenceGlyph(conf string) string {
+	switch conf {
+	case "high":
+		return t.ConfHigh.Render("●●●")
+	case "medium":
+		return t.ConfMed.Render("●●") + t.Muted.Render("○")
+	case "low":
+		return t.ConfLow.Render("●") + t.Muted.Render("○○")
+	default:
+		return t.Muted.Render("○○○")
 	}
 }
 
