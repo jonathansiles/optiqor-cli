@@ -1,0 +1,84 @@
+name: 🐛 Bug report
+description: Something isn't working — analyze gives wrong output, crashes, or misreads a chart.
+title: "bug: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Detailed reports help us reproduce and fix issues quickly.
+
+        Before submitting, please **search [existing issues](https://github.com/optiqor/optiqor-cli/issues?q=is%3Aissue)** to avoid duplicates.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Concise description of the bug. What did you do? What did you expect? What did you see instead?
+      placeholder: When I run `optiqor analyze ./my-chart`, the resource-requests rule reports 0 cost even though limits are set.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Minimal steps to reproduce. A small chart fragment that triggers it is ideal.
+      placeholder: |
+        1. `npx @optiqor/cli analyze ./minimal-chart`
+        2. Notice no findings emitted for the Deployment
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: optiqor_version
+    attributes:
+      label: optiqor-cli version
+      description: Output of `optiqor --version` (or `npx @optiqor/cli --version`).
+      placeholder: v0.3.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install_method
+    attributes:
+      label: Install method
+      options:
+        - npx @optiqor/cli
+        - npm install -g @optiqor/cli
+        - go install
+        - Pre-built binary from releases
+        - Built from source
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS and arch
+      placeholder: macOS 14.4 / arm64  (or Ubuntu 22.04 / x86_64)
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: |
+        Paste the command output, including any error messages. Run with `--debug` for more detail.
+        **Do NOT paste secrets** (API keys, registry tokens). Redact if needed.
+      render: shell
+
+  - type: textarea
+    id: chart_fragment
+    attributes:
+      label: Minimal chart fragment (if applicable)
+      description: A small YAML snippet that reproduces the bug helps us nail it down fast.
+      render: yaml
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Anything else — related PRs, weird workarounds, environment quirks.

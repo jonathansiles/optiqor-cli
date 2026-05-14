@@ -1,0 +1,30 @@
+# Copyright 2026 Optiqor contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# CODEOWNERS — auto-assign reviewers when paths change.
+
+# Default owner for everything not matched below.
+*                                       @btwshivam
+
+# Core analyzer + rules (highest risk for incorrect cost findings).
+/internal/analyze/                      @btwshivam
+/internal/rules/                        @btwshivam
+/pkg/rules/                             @btwshivam
+/pkg/parser/                            @btwshivam
+
+# Renderers and CLI surface.
+/internal/render/                       @btwshivam
+/internal/cli/                          @btwshivam
+/cmd/                                   @btwshivam
+
+# Deployment, release, and npm distribution.
+/.github/                               @btwshivam
+/.goreleaser.yaml                       @btwshivam
+/Dockerfile                             @btwshivam
+/npm/                                   @btwshivam
+/package.json                           @btwshivam
+/package-lock.json                      @btwshivam
+
+# Documentation.
+*.md                                    @btwshivam
+/docs/                                  @btwshivam

@@ -1,0 +1,61 @@
+name: ✨ Feature request
+description: Propose a new feature, enhancement, or behavior change.
+title: "feat: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a feature. Describe the problem before the solution — it helps us understand the actual need.
+
+        For new analysis rules, please pick **Scope: New analysis rule** below and include a sample chart that should trigger it.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What's the problem you're trying to solve? Lead with user impact, not implementation.
+      placeholder: |
+        Our charts use `resources.requests.cpu` but no `limits.cpu`, and we want optiqor to flag that as a cost-overrun risk.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What should optiqor-cli do? Be specific — flags, output format, rule names.
+      placeholder: |
+        Add a `missing_cpu_limit` rule that warns when requests are set but limits aren't.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches did you think about? Why this one?
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - New analysis rule
+        - New CLI subcommand or flag
+        - New output format / renderer
+        - New parser feature
+        - Performance / reliability improvement
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Are you willing to contribute?
+      options:
+        - label: I can implement this if guidance is provided
+        - label: I can test this once it's built
+        - label: I'm just suggesting the idea
