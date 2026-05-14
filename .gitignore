@@ -33,3 +33,4 @@ npm-debug.log*
 !.env.example
 *.pem
 *.key
+.claude
