@@ -1,0 +1,41 @@
+# Copyright 2026 Optiqor contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Stale issue / PR cleanup. Conservative: flags after 120 days of no activity,
+# closes after another 14 days. Excludes P0/P1/security/pinned.
+name: Stale
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 120
+          days-before-close: 14
+          stale-issue-label: stale
+          stale-pr-label: stale
+          stale-issue-message: |
+            This issue has been inactive for 120 days. If it's still relevant, please leave a comment;
+            otherwise it will be auto-closed in 14 days. (Issues labeled P0/P1 are exempt.)
+          stale-pr-message: |
+            This PR has been inactive for 120 days. Please rebase or comment if you'd like to keep it open;
+            otherwise it will be auto-closed in 14 days.
+          close-issue-message: |
+            Auto-closing this issue due to inactivity. Reopen any time if it's still happening — no questions asked.
+          close-pr-message: |
+            Auto-closing this PR due to inactivity. Re-open or push a new commit any time.
+          exempt-issue-labels: "P0,P1,pinned,help wanted,security"
+          exempt-pr-labels: "P0,P1,pinned,security"
+          operations-per-run: 50
+          ascending: true
